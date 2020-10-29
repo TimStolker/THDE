@@ -1,9 +1,8 @@
- 
 #include "hwlib.hpp"
 #include "rtos.hpp"
-#include "send.hpp"
+#include "receive.hpp"
 
 int main( void ){	
-	auto ir = irSendControlClass();
+	auto receiver = irReceiveControlClass();
 	rtos::run();
 }
