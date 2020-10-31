@@ -1,16 +1,21 @@
 #include "hwlib.hpp"
 #include "rtos.hpp"
-#ifndef KEYPAD_HPP
-#define KEYPAD_HPP
-//#include "Registergame.h"
-//#include "InitGameControl.hpp"
+#include "Registergame.hpp"
+#include "InitGameControl.hpp"
+
+#ifndef Keypad_H
+#define Keypad_H
 namespace target = hwlib::target; 
+
+
 
 class Keypadclass : public rtos::task <>{
 
 private:
-	//Registergame & reg;
 	InitGameControl & InitKeyPad;
+	Registergame & reg;
+	bool Reg;
+	bool Init;
 	
 private:
 	void main()
@@ -32,15 +37,23 @@ private:
 		
 		for(;;){
 			auto c = keypad.getc();       
-			
-			//reg.buttonPressed(c);
-			InitKeyPad.buttonPressed(c);
+			if(Reg){
+				reg.buttonPressed(c);
+			}
+			else if(Init){
+				InitKeyPad.buttonPressed(c);
+			}
+			else{
+				InitKeyPad.buttonPressed(c);
+				reg.buttonPressed(c);
+			}
 			
 		}
 	}
 public:
-	Keypadclass(InitGameControl & InitKeyPad):rtos::task<>("keypadTask"), InitKeyPad(InitKeyPad) // LET OP VOOR REGISTERGAME & REG :: Staat er niet in! Zeflde als reg(reg),
-	{};
+	Keypadclass(InitGameControl & InitKeyPad,Registergame & reg):rtos::task <>("keypadtaak"), InitKeyPad(InitKeyPad), reg(reg){}; // LET OP VOOR REGISTERGAME & REG :: Staat er niet in! Zeflde als reg(reg),
+	void Regnoinit(bool reg){Reg=reg;}
+	void Initnoreg(bool init){Init=init;}
 	
 };
 

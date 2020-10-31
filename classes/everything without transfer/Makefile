@@ -1,10 +1,18 @@
-
+#############################################################################
+#
+# Project Makefile
+#
+# Stijn Oosting 2020
+#
+# This file is in the public domain.
+# 
+#############################################################################
 
 # source files in this project (main.cpp is automatically assumed)
 SOURCES :=
 
 # header files in this project
-HEADERS := display.hpp InitGameControl.hpp KeyPad.hpp RunGameControl.hpp receive.hpp send.hpp
+HEADERS := Keypad.hpp Registergame.hpp display.hpp InitGameControl.hpp
 
 # other places to look for files for this project
 SEARCH  := 

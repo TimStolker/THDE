@@ -8,7 +8,7 @@ class irSendControlClass : public rtos::task <>{
 
 private:
     rtos::flag flagShoot;
-    uint16_t Data =;
+    uint16_t Data ;
 
     void main(){
         

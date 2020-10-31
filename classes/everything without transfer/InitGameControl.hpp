@@ -1,5 +1,7 @@
 #include "hwlib.hpp"
 #include "rtos.hpp"
+#include "display.hpp"
+
 namespace target = hwlib::target;
 #ifndef INITGAMECONTROL_H
 #define INITGAMECONTROL_H
@@ -27,7 +29,7 @@ private:
 				case IDLE:
 				{
                     
-					hwlib::cout<<"STATE: IDLE" << hwlib::endl;
+					hwlib::cout<< hwlib::endl<<"STATE: IDLE" << hwlib::endl;
                     auto evt = wait(KeyPadChannel);
 					if(evt==KeyPadChannel)
 					{
@@ -48,8 +50,8 @@ private:
 				// ================================================================
 				case TIMECOMMAND:
 				{
-					hwlib::cout<<"STATE: TIMECOMMAND" << hwlib::endl;
-					hwlib::cout<<"TIME: "<<KeyPadPressedTime<<hwlib::endl;
+					hwlib::cout<< hwlib::endl<<"STATE: TIMECOMMAND" << hwlib::endl;
+					hwlib::cout<< "TIME: "<<KeyPadPressedTime<<hwlib::endl;
 					// DISPLAY MESSAGE! = PRESS A NUMBER!
 					auto evt = wait(KeyPadChannel);
 					if(evt==KeyPadChannel)
@@ -60,7 +62,7 @@ private:
 						{
 							KeyPadPressedTime += ButtonID-'0';
 							hwlib::cout<<"TIME: "<<KeyPadPressedTime<<hwlib::endl;
-                            display.writeDisplay("TIME=X");
+                            display.writeDisplay("TIME=");
                             hwlib::cout<<"na de write pool\n";
 							// DISPLAY MESSAGE! = PRESS A NUMBER OR #, TIME=X min! ( VAR: KeyPadPressedTime )
 							state = TIMECOMMAND;
@@ -87,7 +89,8 @@ private:
 				// ================================================================
 				case SHOOTTIME:
 				{
-					hwlib::cout<<"STATE: SHOOTTIME" << hwlib::endl;
+					hwlib::cout<< hwlib::endl<<"STATE: SHOOTTIME" << hwlib::endl;
+					display.writeDisplay("# :Shoottime");
                     auto evt = wait(KeyPadChannel);
 					if(evt==KeyPadChannel)
 					{
@@ -107,7 +110,7 @@ private:
 				// ================================================================
 				case SHOOTSTART:
 				{
-					hwlib::cout<<"STATE: SHOOTSTART" << hwlib::endl;
+					hwlib::cout<< hwlib::endl<<"STATE: SHOOTSTART" << hwlib::endl;
                     auto evt = wait(KeyPadChannel);
 					if(evt==KeyPadChannel)
 					{
@@ -129,7 +132,7 @@ private:
 		}
 	}
 public:
-	InitGameControl(DisplayTask & display):rtos::task<>("InitGameTask"),KeyPadChannel(this, "character"), display(display){};
+	InitGameControl(DisplayTask & display):rtos::task<>(1,"InitGameTask"),KeyPadChannel(this, "character"), display(display){};
 	void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
 
 };
