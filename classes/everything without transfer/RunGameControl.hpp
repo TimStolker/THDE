@@ -9,8 +9,6 @@ class RunGameClass : public rtos::task <>{
     enum state_t {IDLE,NORMAL,SHOOT};
     state_t state = IDLE;
 private:
-
-    rtos::flag ShootFlag;
     rtos::pool <int> HitPowerPool;
     rtos::pool <int> HitPlayerPool;
     rtos::flag HitFlag;
@@ -50,7 +48,7 @@ private:
                     display.writeDisplay(Health);
                     display.writeDisplay(time);
 
-                    auto evt = wait(HitFlag+ShootFlag+timeClock);
+                    auto evt = wait(HitFlag+timeClock);
                     if(evt == HitFlag){
 
                         Health = (Health - HitPowerPool.read());
@@ -106,8 +104,7 @@ private:
     }
 
 public:
-    RunGameClass(irSendControlClass & irSend, DisplayTask & display, long long delay): rtos::task<>("RunGameTask"),  ShootFlag(this, "ShootFlag"), HitPowerPool("HitPowerPool"), HitPlayerPool("HitPlayerPool"), HitFlag(this, "HitFlag"), StartFlag(this, "StartFlag"), timeClock( this, delay, "timeClock" ), display(display), irSend(irSend){ }
-    //void buttonPressed(eButtonID buttonID){ bnPressChannel.write(buttonID); ShootFlag.set() }
+    RunGameClass(irSendControlClass & irSend, DisplayTask & display, long long delay): rtos::task<>("RunGameTask"), HitPowerPool("HitPowerPool"), HitPlayerPool("HitPlayerPool"), HitFlag(this, "HitFlag"), StartFlag(this, "StartFlag"), timeClock( this, delay, "timeClock" ), display(display), irSend(irSend){ }
     void GetHit(int PlayerNmr, int power){ HitPowerPool.write(power); HitPlayerPool.write(PlayerNmr); HitFlag.set(); }
     void StartGame(){StartFlag.set();}
     void SetPlayerData(int PlayerNmr, int power){ PlayerData = PlayerNmr; PlayerPower = power; }
