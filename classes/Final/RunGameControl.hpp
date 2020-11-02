@@ -7,10 +7,15 @@
 
 class hitList{
 private:
-    int hits[9];    //max 9 players (player 0 doet niet mee)
+    int hits[9]; 
 
 public:
-    int get(){ return *hits; }
+    hitList(){
+        for(int i=0; i<10; i++){
+            hits[i] = 0;
+        }
+    }
+    int get(int player){ return hits[player]; }
     void set(int player, int power){
         hits[player] += power;
     }
