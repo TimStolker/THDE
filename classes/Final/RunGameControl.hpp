@@ -2,24 +2,11 @@
 #include "rtos.hpp"
 #include "send.hpp"
 #include "display.hpp"
+#include "TransferHitControl.hpp"
 #ifndef RUNGAMECONTROL_HPP
 #define RUNGAMECONTROL_HPP
 
-class hitList{
-private:
-    int hits[9]; 
 
-public:
-    hitList(){
-        for(int i=0; i<10; i++){
-            hits[i] = 0;
-        }
-    }
-    int get(int player){ return hits[player]; }
-    void set(int player, int power){
-        hits[player] += power;
-    }
-};
 
 namespace target = hwlib::target; 
 
@@ -35,6 +22,8 @@ private:
     rtos::clock timeClock;
     DisplayTask & display;
     irSendControlClass & irSend;
+    TransferHitControl & TransferHit;
+    
     hitList HitList;
 
     int PlayerData;
@@ -91,6 +80,7 @@ private:
                     else if(time == 0){
                         display.clearDisplay();
                         display.writeDisplay("Time's up",1);
+                        TransferHit.transfer(HitList);
                         state = IDLE;
                     }
                     else if(evt == timeClock){
@@ -128,7 +118,7 @@ private:
     }
 
 public:
-    RunGameClass(irSendControlClass & irSend, DisplayTask & display, long long delay): rtos::task<>("RunGameTask"), HitPowerPool("HitPowerPool"), HitPlayerPool("HitPlayerPool"), HitFlag(this, "HitFlag"), StartFlag(this, "StartFlag"), timeClock( this, delay, "timeClock" ), display(display), irSend(irSend){ }
+    RunGameClass(irSendControlClass & irSend, DisplayTask & display, long long delay, TransferHitControl & TransferHit): rtos::task<>("RunGameTask"), HitPowerPool("HitPowerPool"), HitPlayerPool("HitPlayerPool"), HitFlag(this, "HitFlag"), StartFlag(this, "StartFlag"), timeClock( this, delay, "timeClock" ), display(display), irSend(irSend), TransferHit(TransferHit){ }
     void GetHit(int PlayerNmr, int power){ HitPowerPool.write(power); HitPlayerPool.write(PlayerNmr); HitFlag.set(); }
     void StartGame(){StartFlag.set();}
     void SetPlayerData(int PlayerNmr, int power){ PlayerData = PlayerNmr; PlayerPower = power; }
