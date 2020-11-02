@@ -80,16 +80,16 @@ private:
             auto evt = wait(flagDisplayReadChar+flagDisplayReadInt+flagClear);
             if(evt == flagClear){
                 display.clearDisplay();
-                hwlib::wait_ms(1000);
+                hwlib::wait_ms(100);
             }
             else if(evt == flagDisplayReadChar){
                 display.setDisplay(displayPoolReadChar.read(), NewLine);
-                hwlib::wait_ms(1000);
+                hwlib::wait_ms(100);
 
             }
             else if(evt == flagDisplayReadInt){
                 display.setDisplay(displayPoolReadInt.read(), NewLine);
-                hwlib::wait_ms(1000); 
+                hwlib::wait_ms(100); 
             }
 
             
