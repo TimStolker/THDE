@@ -33,13 +33,15 @@ private:
 					//=========================================================
 					case IDLE:{
 						display.clearDisplay();
-						hwlib::wait_ms(1000);
+						hwlib::wait_ms(500);
+						display.writeDisplay("Press A",1);
+						
 						auto evt = wait(KeyPadChannel);
 						if(evt==KeyPadChannel)
 						{
 							if('A'==KeyPadChannel.read()){
 								display.clearDisplay();
-								hwlib::wait_ms(1000);
+								hwlib::wait_ms(500);
 								display.writeDisplay("Player: ");
 								state = PLAYERNUMBER;
 							}
@@ -48,23 +50,24 @@ private:
 					}
 					//=========================================================
 					case PLAYERNUMBER:{
-
+						
 						auto evt = wait(KeyPadChannel);
 						if(evt==KeyPadChannel)
 						{
 							char press=KeyPadChannel.read();
 							if(press-'0'>=0&&press-'0'<=9)
 							{
+								display.clearDisplay();
 								sendnum = press-48; //SEND NAAR GAME
-								//display.clearDisplay();
-								//display.writeDisplay("Player: ",1);
+								hwlib::wait_ms(500);
+								display.writeDisplay("Player: ");
 								display.writeDisplay(sendnum,0);
 							}
 							if(press=='B'){
-								if(sendnum==!0){	
+								if(!(sendnum==0)){	
 									display.clearDisplay();
-									hwlib::wait_ms(1000);
-									display.writeDisplay("Weaponpower: ");
+									hwlib::wait_ms(500);
+									display.writeDisplay("Weaponpower: ",1);
 									state = WEAPONPOWER;
 								}	
 							}
@@ -84,7 +87,8 @@ private:
 
 	
 								display.writeDisplay(sendnum,0);
-								hwlib::wait_ms(1000);
+								//write weap
+								hwlib::wait_ms(500);
 								state = WAITPLAYTIME;
 							}
 						
@@ -94,6 +98,9 @@ private:
 					}
 					//===========================================================
 					case WAITPLAYTIME:{
+						display.clearDisplay();
+						hwlib::wait_ms(500);
+						display.writeDisplay("Wait Time",1);
 						auto evt = wait(Commandflag+Startflag);
 						if(evt == Commandflag){
 							Command = CmdRecievePool.read();
