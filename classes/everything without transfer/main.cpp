@@ -3,27 +3,22 @@
 #include "display.hpp"
 #include "InitGameControl.hpp"
 #include "RunGameControl.hpp"
-#include "Keypad.hpp"
+#include "Registergame.hpp"
+#include "KeyPad.hpp"
 #include "receive.hpp"
-#include "Registergame.hpp" 
-
+#include "TransferHitControl.hpp"
 
 int main( void ){
-	hwlib::wait_ms(500);
-	hwlib::cout<<"Pre reg\n";
-	
-	
-	hwlib::cout<<"Pre mykey\n";
-	
-	auto displayClass = DisplayClass();
-	
+    hwlib::wait_ms(500);
+    auto transfer = TransferHitControl();
+    auto displayClass = DisplayClass();
     auto display = DisplayTask(displayClass);
-	auto reg = Registergame(display);
-    auto Init = InitGameControl(display);
-	
-	auto mykeypad = Keypadclass(Init,reg);
-	auto irSend = irSendControlClass();
-    auto runGame = RunGameClass(irSend, display, 1000 * rtos::ms);
-	hwlib::cout<<"pre run\n";
-	rtos::run();
+    auto irSend = irSendControlClass();
+    auto Init = InitGameControl(display,irSend);
+    auto runGame = RunGameClass(irSend, display, 10000 * rtos::ms, transfer);
+    auto reg = Registergame(display, runGame);
+    auto mykeypad = Keypadclass(Init,reg);
+    auto receive = irReceiveControlClass(runGame,reg);
+
+    rtos::run();
 }
