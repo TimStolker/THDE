@@ -1,5 +1,3 @@
-
-
 #include "hwlib.hpp"
 #include "rtos.hpp"
 #include "RunGameControl.hpp"
@@ -13,8 +11,11 @@ private:
     uint16_t byte_index = 32'768; //eerste bit links
     uint16_t playerPower;
     uint16_t playerNumber;
+    uint16_t PLcoded;
+    int on_time;
     RunGameClass & runGame;
     Registergame & regGame;
+    unsigned int connection_timeout;
 
     void main(){
         auto tsop_signal = target::pin_in( target::pins::d8 );
@@ -23,21 +24,25 @@ private:
         for(;;){
             switch(state){
                 case IDLE: {
+                    hwlib::wait_us(1000);
                     tsop_signal.refresh();
                     if( tsop_signal.read() == 0 ){
                         state = RECEIVE;
                     }
                     break;
+
                 }
                     
                 case RECEIVE: {
+                    byte = 0;
                     for(int i=0;i<16;i++){
-                        auto connection_timeout = hwlib::now_us();
+                        connection_timeout = hwlib::now_us();
                         for(;;){
-                            int on_time = 0;
+                            hwlib::wait_us(100);
+                            on_time = 0;
                             if(tsop_signal.read() == 0 ){
                                 on_time = hwlib::now_us();
-                                while(tsop_signal.read() == 0){}
+                                while(tsop_signal.read() == 0){hwlib::wait_us(100);}
                                 on_time = (hwlib::now_us() - on_time);
                             }
                                 
@@ -55,25 +60,24 @@ private:
                                 }
                                 break;
                             }
-                            if(hwlib::now_us()>=(connection_timeout+4000)){
-                                hwlib::cout << "!----------------!\n";
-                                hwlib::cout << "CONNECTION TIMEOUT \n";
-                                hwlib::cout << "!----------------!\n";
-                                return;
+                            if(hwlib::now_us()>=(connection_timeout+40000)){
+                                hwlib::cout << on_time <<"  OUT! \n";
+                                //hwlib::cout << byte << "   Byte \n";
+                                state = IDLE;
+                                break;             
                             }
-
                         }
-                        if(hwlib::now_us()>=(connection_timeout+4000)){
-                        }
-                        
+                        if(hwlib::now_us()>=(connection_timeout+4000)){break;}
                     }
-                    uint16_t playerNumber = (byte >> 1) & 31; //pakt Player Nummer
-                    uint16_t playerPower = (byte >> 6) & 31; //pakt Player Power
-                    uint16_t PLcoded = (playerNumber & playerPower) << 11;
+                    if(hwlib::now_us()>=(connection_timeout+4000)){break;}
+                    hwlib::cout << "\n";
+                    playerNumber = (byte >> 1) & 31; //pakt Player Nummer
+                    playerPower = (byte >> 6) & 31; //pakt Player Power
+                    PLcoded = (playerNumber & playerPower) << 11;
 
                     if(!(PLcoded==(PLcoded & byte))){ //als controle bits niet kloppen
-                        hwlib::cout<<"Control-bit Error \n";
-                        return;
+                        state = IDLE;
+                        break;
                     }
 
                     state = PROCESS;
@@ -81,14 +85,13 @@ private:
                 }
 
                 case PROCESS: {
-                    uint16_t playerNumber = (byte >> 1) & 31; //pakt Player Nummer
-                    uint16_t playerPower = (byte >> 6) & 31; //pakt Player Power
                     if(playerNumber == 0 && playerPower == 0){
+                        hwlib::cout << "Game start \n";
                         regGame.Start();
                     }
                     
                     if(playerNumber == 0){
-                        //runGame.SetGameTime(playerPower * 60);
+                        hwlib::cout << "Time Set \n";
                         regGame.GameTime(playerPower * 60);
                     }
                     
@@ -106,6 +109,7 @@ private:
                     
                     hwlib::cout << "\n";
                     hwlib::cout << byte << "   BYTE'S DONE \n";
+                    state = IDLE;
                     break;
                 }
 
@@ -114,7 +118,7 @@ private:
     }
 
 public:
-    irReceiveControlClass(RunGameClass & runGame, Registergame & regGame): rtos::task<>(1,"irreceive"), runGame(runGame), regGame(regGame){}
+    irReceiveControlClass(RunGameClass & runGame, Registergame & regGame): rtos::task<>(1,"irreceive"), runGame(runGame), regGame(regGame){hwlib::cout << "AANGEMAAKT \n";}
 
 };
 
