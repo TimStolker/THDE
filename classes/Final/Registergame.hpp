@@ -32,6 +32,7 @@ private:
 				switch(state){
 					//=========================================================
 					case IDLE:{
+						hwlib::cout << "IDLE REG \n";
 						display.clearDisplay();
 						hwlib::wait_ms(500);
 						display.writeDisplay("Press A",1);
@@ -120,11 +121,10 @@ private:
 
 		}
 public:
-		Registergame(DisplayTask & display, RunGameClass & runGame):rtos::task <>(2,"ParameterTask"),KeyPadChannel( this, "character" ),Commandflag( this, "Commandflag " ), CmdRecievePool("CmdRecievePool"), Startflag(this, "Startflag"), display(display), runGame(runGame){}; // ,Commandflag( this, "Commandflag " ) moet er bijjj voor recieve
+		Registergame(DisplayTask & display, RunGameClass & runGame):rtos::task <>("ParameterTask"),KeyPadChannel( this, "character" ),Commandflag( this, "Commandflag " ), CmdRecievePool("CmdRecievePool"), Startflag(this, "Startflag"), display(display), runGame(runGame){}; // ,Commandflag( this, "Commandflag " ) moet er bijjj voor recieve
 		void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
 		void GameTime(int time){Commandflag.set();CmdRecievePool.write(time);}
 		void Start(){Startflag.set();}
 
-	
 };
 #endif
