@@ -30,7 +30,6 @@ private:
                         state = RECEIVE;
                     }
                     break;
-
                 }
                     
                 case RECEIVE: {
@@ -45,8 +44,13 @@ private:
                                 while(tsop_signal.read() == 0){hwlib::wait_us(100);}
                                 on_time = (hwlib::now_us() - on_time);
                             }
+                            if(i==0){
+                                byte = byte | 0x01;
+                                byte = byte << 1;
+                                break;
+                            }
                                 
-                            if(on_time >= 1200 ){
+                            else if(on_time >= 1200 ){
                                 byte = byte | 0x01;
                                 if(i!=15){
                                     byte = byte << 1;
@@ -61,8 +65,6 @@ private:
                                 break;
                             }
                             if(hwlib::now_us()>=(connection_timeout+40000)){
-                                hwlib::cout << on_time <<"  OUT! \n";
-                                //hwlib::cout << byte << "   Byte \n";
                                 state = IDLE;
                                 break;             
                             }
@@ -70,12 +72,13 @@ private:
                         if(hwlib::now_us()>=(connection_timeout+4000)){break;}
                     }
                     if(hwlib::now_us()>=(connection_timeout+4000)){break;}
-                    hwlib::cout << "\n";
-                    playerNumber = (byte >> 1) & 31; //pakt Player Nummer
-                    playerPower = (byte >> 6) & 31; //pakt Player Power
-                    PLcoded = (playerNumber & playerPower) << 11;
-
-                    if(!(PLcoded==(PLcoded & byte))){ //als controle bits niet kloppen
+                    hwlib::cout << byte << ":  Byte \n";
+                    playerNumber = (byte & ( 31 << 10 )) >> 10;
+                    playerPower = (byte & ( 31 << 5 )) >> 5;
+                    PLcoded = byte & 31;
+                    
+                    if(!(PLcoded == (playerNumber^playerPower << 0))){
+                        hwlib::cout << PLcoded << " == " << (playerNumber^playerPower) << "  XOR FAILED \n";
                         state = IDLE;
                         break;
                     }
@@ -86,28 +89,12 @@ private:
 
                 case PROCESS: {
                     if(playerNumber == 0 && playerPower == 0){
-                        hwlib::cout << "Game start \n";
                         regGame.Start();
                     }
                     
-                    if(playerNumber == 0){
-                        hwlib::cout << "Time Set \n";
-                        regGame.GameTime(playerPower * 60);
+                    else if(playerNumber == 0 && playerPower > 0){
+                        regGame.GameTime(playerPower);
                     }
-                    
-                    else{
-                        runGame.GetHit(playerNumber,playerPower);
-                        for(unsigned int i=0;i<16;i++){
-                            if(byte & (byte_index >> i)){
-                                hwlib::cout << "1";
-                            }
-                            else{
-                                hwlib::cout << "0";
-                            }
-                        }
-                    }
-                    
-                    hwlib::cout << "\n";
                     hwlib::cout << byte << "   BYTE'S DONE \n";
                     state = IDLE;
                     break;
@@ -118,7 +105,7 @@ private:
     }
 
 public:
-    irReceiveControlClass(RunGameClass & runGame, Registergame & regGame): rtos::task<>(1,"irreceive"), runGame(runGame), regGame(regGame){hwlib::cout << "AANGEMAAKT \n";}
+    irReceiveControlClass(RunGameClass & runGame, Registergame & regGame): rtos::task<>(1,"irreceive"), runGame(runGame), regGame(regGame){}
 
 };
 
