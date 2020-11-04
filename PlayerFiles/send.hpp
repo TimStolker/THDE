@@ -1,17 +1,16 @@
 #include "hwlib.hpp"
 #include "rtos.hpp"
-
 #ifndef SEND_HPP
 #define SEND_HPP
-namespace target = hwlib::target; 
-class irSendControlClass : public rtos::task <>{
 
+namespace target = hwlib::target; 
+
+class irSendControlClass : public rtos::task <>{
 private:
     rtos::flag flagShoot;
     uint16_t Data;
 
     void main(){
-        
         uint16_t data_index = 32768; //meest linker bit
         enum state_t {IDLE, SHOOT}; 
         state_t state = IDLE;
@@ -25,7 +24,7 @@ private:
                     }
                     break;
                 }
-                    
+                  
                 case SHOOT: {
                     for(unsigned int i=0;i<16;i++){
                         bool bit = (Data & (data_index >> i));
@@ -56,8 +55,8 @@ private:
 
 public:
     irSendControlClass():
-    rtos::task<>("irsend"), 
-    flagShoot(this, "flagShoot")
+        rtos::task<>("irsend"), 
+        flagShoot(this, "flagShoot")
     {}
     
     void setSignal(uint16_t data){ Data = data; flagShoot.set();}
