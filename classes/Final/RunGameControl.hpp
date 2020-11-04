@@ -19,6 +19,7 @@ private:
     rtos::flag HitFlag;
     rtos::flag StartFlag;
     rtos::clock timeClock;
+    rtos::channel<char, 10> KeyPadChannel;
     DisplayTask & display;
     irSendControlClass & irSend;
     TransferHitControl & TransferHit;
@@ -35,7 +36,6 @@ private:
 
 
     void main(){
-        auto sw = hwlib::target::pin_in( hwlib::target::pins::d43 );
         for(;;){
             switch(state){
                 // ================================================================
@@ -72,7 +72,7 @@ private:
                             state = IDLE;
                         }
                     }
-                    else if(sw.read()==0){
+                    else if(KeyPadChannel.read() == '*'){
                         if(gunCooldown<=0){
                             state = SHOOT;
                             break;
@@ -109,11 +109,12 @@ private:
     }
 
 public:
-    RunGameClass(irSendControlClass & irSend, DisplayTask & display, long long delay, TransferHitControl & TransferHit): rtos::task<>("RunGameTask"), HitPowerPool("HitPowerPool"), HitPlayerPool("HitPlayerPool"), HitFlag(this, "HitFlag"), StartFlag(this, "StartFlag"), timeClock( this, delay, "timeClock" ), display(display), irSend(irSend), TransferHit(TransferHit){ }
+    RunGameClass(irSendControlClass & irSend, DisplayTask & display, long long delay, TransferHitControl & TransferHit): rtos::task<>("RunGameTask"), HitPowerPool("HitPowerPool"), HitPlayerPool("HitPlayerPool"), HitFlag(this, "HitFlag"), StartFlag(this, "StartFlag"), timeClock( this, delay, "timeClock" ), KeyPadChannel(this, "character"), display(display), irSend(irSend), TransferHit(TransferHit){ }
     void GetHit(int PlayerNmr, int power){ HitPowerPool.write(power); HitPlayerPool.write(PlayerNmr); HitFlag.set(); }
     void StartGame(){StartFlag.set();}
     void SetPlayerData(int PlayerNmr, int power){ PlayerData = PlayerNmr; PlayerPower = power; }
     void SetGameTime(int Time){ time = Time; }
+    void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
 
 };
 #endif
