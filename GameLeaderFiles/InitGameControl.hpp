@@ -1,3 +1,8 @@
+//this file contains Doxygen lines
+///file InitGameControl.hpp
+/// \brief InitGameControl class
+/// \details Contains all the necessary information about the InitGameControl class
+
 #include "hwlib.hpp"
 #include "rtos.hpp"
 #include "display.hpp"
@@ -28,7 +33,6 @@ private:
 				case IDLE:
 				{
 					display.clearDisplay();
-					hwlib::wait_ms(100);
 					display.writeDisplay("Press C");
                 
                     auto evt = wait(KeyPadChannel);
@@ -39,9 +43,7 @@ private:
 						{
 							KeyPadPressedTime = 0;
 							display.clearDisplay();
-							hwlib::wait_ms(100);
-							display.writeDisplay("Select time", 1);
-							display.writeDisplay("Shoot = #",1);
+							display.writeDisplay("Select time", 1); 
 							state = TIMECOMMAND;
 						}
 						else
@@ -63,7 +65,6 @@ private:
 						{
 							KeyPadPressedTime += ButtonID-'0';
 							display.clearDisplay();
-							hwlib::wait_ms(100);
                             display.writeDisplay("TIME= ",1);
 							display.writeDisplay(KeyPadPressedTime,0);
 							state = TIMECOMMAND;
@@ -72,7 +73,7 @@ private:
 						{
 							if(KeyPadPressedTime>0&&KeyPadPressedTime<=15)
 							{
-								KeyPadPressedTime = (KeyPadPressedTime << 5) | (32768+KeyPadPressedTime);
+								KeyPadPressedTime = (KeyPadPressedTime << 5) | 32'768;
 								irSend.setSignal(KeyPadPressedTime);
 								state = SHOOTTIME;
 							}
@@ -100,14 +101,12 @@ private:
 						if(ButtonID == '*')
 						{
 							
-							display.clearDisplay();	
-							hwlib::wait_ms(100);				
+							display.clearDisplay();					
                             display.writeDisplay("Press * to start");
 							
 							state = SHOOTSTART;
 						}
 						else if(ButtonID == '#'){
-							//hwlib::cout<<"Shoot again\n";
 							irSend.setSignal(KeyPadPressedTime);
 						}
 					}
@@ -120,15 +119,13 @@ private:
 					if(evt==KeyPadChannel)
 					{
 						ButtonID = KeyPadChannel.read();
-						hwlib::cout<<ButtonID<<hwlib::endl;
 						if(ButtonID == 'C')
 						{
 							state = IDLE;
 						}
 						else if(ButtonID == '*')
 						{
-							hwlib::cout<<"Start signal\n";
-							irSend.setSignal(32768);
+							irSend.setSignal(32'768);
 							state = SHOOTSTART;
 						}
 					}
@@ -137,13 +134,9 @@ private:
 		}
 	}
 public:
-	InitGameControl(DisplayTask & display, irSendControlClass & irSend):
-	rtos::task<>("InitGameTask"),
-	KeyPadChannel(this, "character"), 
-	display(display), 
-	irSend(irSend)
-	{};
-
+    /// \brief keypad button press
+    /// \details Requires a char buttonNumber
+	InitGameControl(DisplayTask & display, irSendControlClass & irSend):rtos::task<>("InitGameTask"),KeyPadChannel(this, "character"), display(display), irSend(irSend){};
 	void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
 
 };
