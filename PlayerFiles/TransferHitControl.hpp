@@ -1,3 +1,8 @@
+//this file contains Doxygen lines
+///file TransferHitControl.hpp
+/// \brief TransferHitControl class 
+/// \details Contains all the necessary information about the TransferHitControl class
+
 #include "hwlib.hpp"
 #include "rtos.hpp"
 namespace target = hwlib::target;
@@ -21,10 +26,12 @@ public:
 };
 
 class TransferHitControl : public rtos::task <>{
+	
 private:
 	enum state_t { IDLE, DATATRANSFER };
 	state_t state = IDLE;
-        rtos::flag transferFlag;
+    rtos::flag transferFlag;
+	
 	hitList hitlist;
 	
 	void main()
@@ -51,17 +58,19 @@ private:
 					hwlib::cout << "Done" << hwlib:: endl;
 					state = IDLE;
 				}
-				break;
+					break;
 			}
 		}
 	}
 	
 public:
-    TransferHitControl():
-	rtos::task<>("TransferHitTaak"), 
-	transferFlag(this, "transferFlag")
+	TransferHitControl():
+    rtos::task<>("TransferHitTaak"), 
+    transferFlag(this, "transferFlag")
     {}
-    
+
+    /// \brief Sets data from hitlist in list and sets a transferFlag
+    /// \details Requires a list from hitList class
     void transfer(hitList & list){ hitlist = list; transferFlag.set(); }
 };
 
