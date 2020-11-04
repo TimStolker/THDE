@@ -32,8 +32,7 @@ private:
                     
                     for(unsigned int i=0;i<16;i++){
                         bool bit = (Data & (data_index >> i));
-                        //hwlib::cout << bit << "\n";
-						hwlib::wait_us(800);
+			hwlib::wait_us(800);
 
                         if(bit){ 
                             ir.write(1);
@@ -60,7 +59,11 @@ private:
     }
 
 public:
-    irSendControlClass(): rtos::task<>(1,"irsend"), flagShoot(this, "flagShoot"){}
+    	irSendControlClass(): 
+	rtos::task<>("irsend"), 
+	flagShoot(this, "flagShoot")
+	{}
+
     void setSignal(uint16_t data){ Data = data;  flagShoot.set(); }
 
 };
