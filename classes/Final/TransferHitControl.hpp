@@ -45,13 +45,12 @@ private:
 				}
 				case DATATRANSFER:
 				{
-					hwlib::cout << "data \n";
+					hwlib::cout << "Hit by: \n";
 					for(int i = 0; i<9; i++){
 						if(!(hitlist.get(i) == 0){
 							hwlib::cout << "Speler: " << i << " Damage done: " << hitlist.get(i) << hwlib::endl;
 						}
 					}
-					hwlib::cout << "Done" << hwlib:: endl;
 					state = IDLE;
 				}
 					break;
