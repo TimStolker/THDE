@@ -3,9 +3,10 @@
 #include "RunGameControl.hpp"
 #ifndef RECEIVE_HPP
 #define RECEIVE_HPP
-namespace target = hwlib::target; 
-class irReceiveControlClass : public rtos::task <>{
 
+namespace target = hwlib::target; 
+
+class irReceiveControlClass : public rtos::task <>{
 private:
     uint16_t byte = 0x00;
     uint16_t byte_index = 32'768; //eerste bit links
@@ -31,7 +32,7 @@ private:
                     }
                     break;
                 }
-                    
+                 
                 case RECEIVE: {
                     byte = 0;
                     for(int i=0;i<16;i++){
@@ -99,16 +100,15 @@ private:
                     state = IDLE;
                     break;
                 }
-
             }
         }
     }
 
 public:
     irReceiveControlClass(RunGameClass & runGame, Registergame & regGame): 
-    rtos::task<>("irreceive"), 
-    runGame(runGame), 
-    regGame(regGame)
+        rtos::task<>("irreceive"), 
+        runGame(runGame), 
+        regGame(regGame)
     {}
 
 };
