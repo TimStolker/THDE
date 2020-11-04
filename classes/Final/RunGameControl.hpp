@@ -11,15 +11,14 @@
 namespace target = hwlib::target; 
 
 class RunGameClass : public rtos::task <>{
+private:
     enum state_t {IDLE,NORMAL,SHOOT};
     state_t state = IDLE;
-private:
     rtos::pool <int> HitPowerPool;
     rtos::pool <int> HitPlayerPool;
     rtos::flag HitFlag;
     rtos::flag StartFlag;
     rtos::clock timeClock;
-    rtos::channel<char, 10> KeyPadChannel;
     DisplayTask & display;
     irSendControlClass & irSend;
     TransferHitControl & TransferHit;
@@ -31,9 +30,9 @@ private:
     int time;
     int Health=100;
     int gunCooldown; 
-    uint16_t TmpByte = 0;
+    uint16_t TmpTime = 0;
     uint16_t ShootData = 32'768; //start bit
-
+    rtos::channel<char, 10> KeyPadChannel;
 
     void main(){
         for(;;){
@@ -43,51 +42,51 @@ private:
                     auto evt = wait(StartFlag);
                     if(evt == StartFlag){
                         state = NORMAL;
+                        TmpTime = time-5; 
                     }
                     break;
                 }
                 // ================================================================
                 case NORMAL:{
-                    if((time%10)==0){
-                        display.clearDisplay();
-                        hwlib::wait_ms(500);
-                        display.writeDisplay("Health:",1);
-                        hwlib::wait_ms(100);
-                        display.writeDisplay(Health,0);
-                        display.writeDisplay("Time:",1);
-                        hwlib::wait_ms(100);
-                        display.writeDisplay(time,0);
-                    }
-                    
-
-                    auto evt = wait(HitFlag+timeClock);
+                    hwlib::wait_ms(100);    
+                    auto evt = wait(HitFlag+timeClock+KeyPadChannel);
                     if(evt == HitFlag){
-
                         Health = (Health - HitPowerPool.read());
                         HitList.set(HitPlayerPool.read(), HitPowerPool.read());
                         if(Health == 0){
                             display.clearDisplay();
-                            hwlib::wait_ms(100);
                             display.writeDisplay("GAME OVER", 1);
                             state = IDLE;
                         }
                     }
-                    else if(KeyPadChannel.read() == '*'){
-                        if(gunCooldown<=0){
-                            state = SHOOT;
-                            break;
+                    if(evt==KeyPadChannel){
+                        if(KeyPadChannel.read()=='*'){
+                            if(gunCooldown<=0){
+                                state = SHOOT;
+                                break;
+                            }
                         }
                     }
-                    else if(time == 0){
-                        display.clearDisplay();
-                        hwlib::wait_ms(100);
-                        display.writeDisplay("Time's up",1);
-                        TransferHit.transfer(HitList);
-                        state = IDLE;
-                    }
-                    else if(evt == timeClock){
+                    if(evt == timeClock){
                         time--;
                         gunCooldown--;
+                        
+                        if(time == 0){
+                            display.clearDisplay();
+                            display.writeDisplay("Time's up",1);
+                            TransferHit.transfer(HitList);
+                            state = IDLE;
+                        }
+                        else if((TmpTime+2) == time){
+                            display.clearDisplay();
+                            display.writeDisplay("Time:",1);
+                            display.writeDisplay(time,1);
+                        }
+                        else if(TmpTime == time){
+                            display.writeDisplay("Health:",1);
+                            display.writeDisplay(Health,1);
+                            TmpTime = time-5;   
+                        }
                     }
                     break;
                 }
@@ -109,7 +108,7 @@ private:
     }
 
 public:
-    RunGameClass(irSendControlClass & irSend, DisplayTask & display, long long delay, TransferHitControl & TransferHit): rtos::task<>("RunGameTask"), HitPowerPool("HitPowerPool"), HitPlayerPool("HitPlayerPool"), HitFlag(this, "HitFlag"), StartFlag(this, "StartFlag"), timeClock( this, delay, "timeClock" ), KeyPadChannel(this, "character"), display(display), irSend(irSend), TransferHit(TransferHit){ }
+    RunGameClass(irSendControlClass & irSend, DisplayTask & display, long long delay, TransferHitControl & TransferHit): rtos::task<>("RunGameTask"), HitPowerPool("HitPowerPool"), HitPlayerPool("HitPlayerPool"), HitFlag(this, "HitFlag"), StartFlag(this, "StartFlag"), timeClock( this, delay, "timeClock" ), display(display), irSend(irSend), TransferHit(TransferHit), KeyPadChannel( this, "character" ){ }
     void GetHit(int PlayerNmr, int power){ HitPowerPool.write(power); HitPlayerPool.write(PlayerNmr); HitFlag.set(); }
     void StartGame(){StartFlag.set();}
     void SetPlayerData(int PlayerNmr, int power){ PlayerData = PlayerNmr; PlayerPower = power; }
