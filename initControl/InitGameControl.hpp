@@ -74,7 +74,7 @@ private:
 						{
 							if(KeyPadPressedTime>0&&KeyPadPressedTime<=15)
 							{
-								KeyPadPressedTime = (KeyPadPressedTime << 5) | 32'768;
+								KeyPadPressedTime = (KeyPadPressedTime << 5) | (32768+KeyPadPressedTime);
 								hwlib::cout<<"KeyPadPressTime: " << KeyPadPressedTime << "\n";
 								irSend.setSignal(KeyPadPressedTime);
 								state = SHOOTTIME;
@@ -111,7 +111,7 @@ private:
 							state = SHOOTSTART;
 						}
 						else if(ButtonID == '#'){
-							hwlib::cout<<"Shoot again\n";
+							//hwlib::cout<<"Shoot again\n";
 							irSend.setSignal(KeyPadPressedTime);
 						}
 					}
@@ -132,7 +132,7 @@ private:
 						else if(ButtonID == '*')
 						{
 							hwlib::cout<<"Start signal\n";
-							irSend.setSignal(32'768);
+							irSend.setSignal(32768);
 							state = SHOOTSTART;
 						}
 					}

@@ -33,13 +33,14 @@ private:
                     for(unsigned int i=0;i<16;i++){
                         bool bit = (Data & (data_index >> i));
                         //hwlib::cout << bit << "\n";
+						hwlib::wait_us(800);
+
                         if(bit){ 
                             ir.write(1);
                             ir.flush();
                             hwlib::wait_us(1600);
                             ir.write(0);
                             ir.flush();
-                            hwlib::wait_us(800);
                         }
                         else{
                             ir.write(1);
@@ -47,7 +48,7 @@ private:
                             hwlib::wait_us(800);
                             ir.write(0);
                             ir.flush();
-                            hwlib::wait_us(1600);
+                            hwlib::wait_us(800);
                             
                         }
                     }
