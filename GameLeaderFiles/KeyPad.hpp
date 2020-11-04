@@ -43,7 +43,10 @@ private:
 		}
 	}
 public:
-	Keypadclass(InitGameControl & InitKeyPad):rtos::task <>("keypadtaak"), InitKeyPad(InitKeyPad){}; 
+	Keypadclass(InitGameControl & InitKeyPad):
+	rtos::task <>("keypadtaak"), 
+	InitKeyPad(InitKeyPad)
+	{} 
 	void Initnoreg(bool init){Init=init;}
 	
 };
