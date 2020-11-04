@@ -60,7 +60,7 @@ private:
 	
 public:
 	TransferHitControl():rtos::task <>("TransferHitTaak"), transferFlag(this, "transferFlag"){}
-    void transfer(hitList & list){ hwlib::cout << "FUNCTIE \n"; hitlist = list; transferFlag.set(); }
+    void transfer(hitList & list){ hitlist = list; transferFlag.set(); }
 };
 
 #endif
