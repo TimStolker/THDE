@@ -18,7 +18,7 @@ int main( void ){
     auto runGame = RunGameClass(irSend, display, 800 * rtos::ms, transfer);
     auto reg = Registergame(display, runGame);
     auto mykeypad = Keypadclass(Init,reg,runGame);
-     auto receive = irReceiveControlClass(runGame,reg);
+    auto receive = irReceiveControlClass(runGame,reg);
 
-	rtos::run();
+    rtos::run();
 }
