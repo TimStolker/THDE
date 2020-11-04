@@ -32,7 +32,6 @@ private:
 					if(evt==KeyPadChannel)
 					{
 						ButtonID = KeyPadChannel.read();
-						hwlib::cout<<ButtonID<<hwlib::endl;
 						if(ButtonID == 'C')
 						{
 							KeyPadPressedTime = 0;
@@ -56,7 +55,6 @@ private:
 					if(evt==KeyPadChannel)
 					{
 						ButtonID = KeyPadChannel.read();
-						hwlib::cout<<ButtonID<<hwlib::endl;
 						if(ButtonID>=48&&ButtonID<57)
 						{
 							
@@ -93,7 +91,6 @@ private:
 					if(evt==KeyPadChannel)
 					{
 						ButtonID = KeyPadChannel.read();
-						hwlib::cout<<ButtonID<<hwlib::endl;
 						if(ButtonID == '*')
 						{
 							KeyPadPressedTime = (KeyPadPressedTime << 5) | 32'768;
@@ -113,7 +110,6 @@ private:
 					if(evt==KeyPadChannel)
 					{
 						ButtonID = KeyPadChannel.read();
-						hwlib::cout<<ButtonID<<hwlib::endl;
 						if(ButtonID == 'C')
 						{
 							state = IDLE;
