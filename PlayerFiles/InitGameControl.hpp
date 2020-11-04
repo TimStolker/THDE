@@ -1,3 +1,8 @@
+//this file contains Doxygen lines
+///file InitGameControl.hpp
+/// \brief InitGameControl class
+/// \details Contains all the necessary information about the InitGameControl class
+
 #include "hwlib.hpp"
 #include "rtos.hpp"
 #include "display.hpp"
@@ -9,9 +14,10 @@ namespace target = hwlib::target;
 class InitGameControl : public rtos::task <>{
 
 private:
+    
 	rtos::channel<char, 10> KeyPadChannel;
 	int KeyPadPressedTime;
-        DisplayTask & display;
+    DisplayTask & display;
 	irSendControlClass & irSend;
 	void main()
 	{
@@ -59,7 +65,7 @@ private:
 						{
 							KeyPadPressedTime += ButtonID-'0';
 							display.clearDisplay();
-                                                        display.writeDisplay("TIME= ",1);
+                            display.writeDisplay("TIME= ",1);
 							display.writeDisplay(KeyPadPressedTime,0);
 							state = TIMECOMMAND;
 						}
@@ -87,7 +93,8 @@ private:
 				// ================================================================
 				case SHOOTTIME:
 				{
-                                auto evt = wait(KeyPadChannel);
+
+                    auto evt = wait(KeyPadChannel);
 					if(evt==KeyPadChannel)
 					{
 						ButtonID = KeyPadChannel.read();
@@ -95,7 +102,7 @@ private:
 						{
 							
 							display.clearDisplay();					
-                                                        display.writeDisplay("Press * to start");
+                            display.writeDisplay("Press * to start");
 							
 							state = SHOOTSTART;
 						}
@@ -127,14 +134,16 @@ private:
 		}
 	}
 public:
-    InitGameControl(DisplayTask & display, irSendControlClass & irSend):
-	rtos::task<>("InitGameTask"),
-	KeyPadChannel(this, "character"), 
-	display(display), 
-	irSend(irSend)
+	InitGameControl(DisplayTask & display, irSendControlClass & irSend):
+    rtos::task<>("InitGameTask"),
+    KeyPadChannel(this, "character"), 
+    display(display), 
+    irSend(irSend)
     {}
-    
-    void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
+
+    /// \brief keypad button press
+    /// \details Requires a char buttonNumber
+	void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
 
 };
 
