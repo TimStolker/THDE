@@ -28,7 +28,7 @@ private:
     int PlayerData;
     int PlayerPower;
     int time;
-    int Health=100;
+    int Health=5;
     int gunCooldown; 
     uint16_t TmpTime = 0;
     uint16_t ShootData = 32'768; //start bit
@@ -51,12 +51,15 @@ private:
                     hwlib::wait_ms(100);    
                     auto evt = wait(HitFlag+timeClock+KeyPadChannel);
                     if(evt == HitFlag){
+                        hwlib::cout << "HIT \n";
                         Health = (Health - HitPowerPool.read());
                         HitList.set(HitPlayerPool.read(), HitPowerPool.read());
-                        if(Health == 0){
+                        if(Health <= 0){
                             display.clearDisplay();
                             display.writeDisplay("GAME OVER", 1);
+                            TransferHit.transfer(HitList);
                             state = IDLE;
+                            break;
                         }
                     }
                     if(evt==KeyPadChannel){
@@ -76,6 +79,7 @@ private:
                             display.writeDisplay("Time's up",1);
                             TransferHit.transfer(HitList);
                             state = IDLE;
+                            break;
                         }
                         else if((TmpTime+2) == time){
                             display.clearDisplay();
