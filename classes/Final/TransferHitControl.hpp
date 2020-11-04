@@ -31,36 +31,24 @@ private:
 	
 	void main()
 	{
-		hitlist.set(1, 1);	// TIJDELIJK
-		hitlist.set(2, 2);	// TIJDELIJK
-		hitlist.set(3, 3);	// TIJDELIJK
-		hitlist.set(1, 10);	// TIJDELIJK
-		auto ButtonInput = hwlib::target::pin_in( target::pins::d39 );
-		hwlib::cout<<"Press button" << hwlib::endl; // TIJDELIJK
 		for(;;)
 		{
 			switch(state)
 			{
-				case IDLE:
-				{
-                    auto evt = wait(transferFlag);
-                    if(evt == transferFlag){
-                        for(;;){
-                            if(ButtonInput.read() == 0) 
-                            {
-                                hwlib::wait_ms(200);
-                                state = DATATRANSFER; 
-                            }
-                        }
-
-                    }
+				case IDLE:{
+					auto evt = wait(transferFlag);
+					if(evt == transferFlag){
+						hwlib::wait_ms(200);
+						state = DATATRANSFER;
+					}
 					break;
 				}
 				case DATATRANSFER:
 				{
-					for(int i = 0; i<10; i++){
-						if(!(hitlist.get(i) == 0)){
-							hwlib::cout << "Speler: " << i << " Hits " << hitlist.get(i) << hwlib::endl;
+					hwlib::cout << "data \n";
+					for(int i = 0; i<9; i++){
+						if(!(hitlist.get(i) == 0){
+							hwlib::cout << "Speler: " << i << " Damage done: " << hitlist.get(i) << hwlib::endl;
 						}
 					}
 					hwlib::cout << "Done" << hwlib:: endl;
@@ -72,8 +60,8 @@ private:
 	}
 	
 public:
-	TransferHitControl():rtos::task <>(1,"TransferHitTaak"), transferFlag(this, "transferFlag"){}
-    void transfer(hitList & list){ hitlist = list; transferFlag.set(); }
+	TransferHitControl():rtos::task <>("TransferHitTaak"), transferFlag(this, "transferFlag"){}
+    void transfer(hitList & list){ hwlib::cout << "FUNCTIE \n"; hitlist = list; transferFlag.set(); }
 };
 
 #endif
