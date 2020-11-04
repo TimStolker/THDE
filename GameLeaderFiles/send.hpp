@@ -1,3 +1,8 @@
+//this file contains Doxygen lines
+///file send.hpp
+/// \brief send class
+/// \details Contains all the necessary information about the send class
+
 #include "hwlib.hpp"
 #include "rtos.hpp"
 
@@ -64,6 +69,8 @@ public:
 	flagShoot(this, "flagShoot")
 	{}
 
+    /// \brief Sets 16 bits 
+    /// \details Requires an uint16_t data and sets the flagShoot
     void setSignal(uint16_t data){ Data = data;  flagShoot.set(); }
 
 };
