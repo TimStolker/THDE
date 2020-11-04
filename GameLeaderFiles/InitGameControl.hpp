@@ -7,124 +7,95 @@
 #include "rtos.hpp"
 #include "display.hpp"
 #include "send.hpp"
-namespace target = hwlib::target;
 #ifndef INITGAMECONTROL_H
 #define INITGAMECONTROL_H
 
-class InitGameControl : public rtos::task <>{
+namespace target = hwlib::target;
 
+class InitGameControl : public rtos::task <>{
 private:
-    
 	rtos::channel<char, 10> KeyPadChannel;
 	int KeyPadPressedTime;
-    DisplayTask & display;
+   	DisplayTask & display;
 	irSendControlClass & irSend;
-	void main()
-	{
+	void main(){
 		enum state_t { IDLE, TIMECOMMAND, SHOOTSTART, SHOOTTIME };
 		state_t state = IDLE;
 		char ButtonID;
-		for(;;)
-		{
-			switch(state)
-			{
-				// ================================================================
-				
-				case IDLE:
-				{
+		for(;;){
+			switch(state){
+				case IDLE:{
 					display.clearDisplay();
 					display.writeDisplay("Press C");
-                
-                    auto evt = wait(KeyPadChannel);
-					if(evt==KeyPadChannel)
-					{
+                    			auto evt = wait(KeyPadChannel);
+					if(evt==KeyPadChannel){
 						ButtonID = KeyPadChannel.read();
-						if(ButtonID == 'C')
-						{
+						if(ButtonID == 'C'){
 							KeyPadPressedTime = 0;
 							display.clearDisplay();
 							display.writeDisplay("Select time", 1); 
 							state = TIMECOMMAND;
 						}
-						else
-						{
+						else{
 							state = IDLE;
 						}
 					}
 				break;
 				}
-				// ================================================================
-				case TIMECOMMAND:
-				{
+				case TIMECOMMAND:{
 
 					auto evt = wait(KeyPadChannel);
-					if(evt==KeyPadChannel)
-					{
+					if(evt==KeyPadChannel){
 						ButtonID = KeyPadChannel.read();
-						if(ButtonID>=48&&ButtonID<57)
-						{
+						if(ButtonID>=48&&ButtonID<57){
 							KeyPadPressedTime += ButtonID-'0';
 							display.clearDisplay();
-                            display.writeDisplay("TIME= ",1);
+                           				display.writeDisplay("TIME= ",1);
 							display.writeDisplay(KeyPadPressedTime,0);
 							state = TIMECOMMAND;
 						}
-						else if(ButtonID == '#')
-						{
-							if(KeyPadPressedTime>0&&KeyPadPressedTime<=15)
-							{
+						else if(ButtonID == '#'){
+							if(KeyPadPressedTime>0&&KeyPadPressedTime<=15){
 								KeyPadPressedTime = (KeyPadPressedTime << 5) | 32'768;
 								irSend.setSignal(KeyPadPressedTime);
 								state = SHOOTTIME;
 							}
-							else
-							{
+							else{
 								KeyPadPressedTime = 0;
 								state = TIMECOMMAND;
 							}
 						}
-						else
-						{
+						else{
 							state = TIMECOMMAND;
 						}
 					}
-				break;
+					break;
 				}
-				// ================================================================
-				case SHOOTTIME:
-				{
-
-                    auto evt = wait(KeyPadChannel);
-					if(evt==KeyPadChannel)
-					{
+					
+				case SHOOTTIME:{
+                    			auto evt = wait(KeyPadChannel);
+					if(evt==KeyPadChannel){
 						ButtonID = KeyPadChannel.read();
-						if(ButtonID == '*')
-						{
-							
+						if(ButtonID == '*'){
 							display.clearDisplay();					
-                            display.writeDisplay("Press * to start");
-							
+                            				display.writeDisplay("Press * to start");	
 							state = SHOOTSTART;
 						}
 						else if(ButtonID == '#'){
 							irSend.setSignal(KeyPadPressedTime);
 						}
 					}
-				break;
+					break;
 				}
-				// ================================================================
-				case SHOOTSTART:
-				{
-                    auto evt = wait(KeyPadChannel);
-					if(evt==KeyPadChannel)
-					{
+					
+				case SHOOTSTART:{
+                    			auto evt = wait(KeyPadChannel);
+					if(evt==KeyPadChannel){
 						ButtonID = KeyPadChannel.read();
-						if(ButtonID == 'C')
-						{
+						if(ButtonID == 'C'){
 							state = IDLE;
 						}
-						else if(ButtonID == '*')
-						{
+						else if(ButtonID == '*'){
 							irSend.setSignal(32'768);
 							state = SHOOTSTART;
 						}
@@ -136,7 +107,13 @@ private:
 public:
     /// \brief keypad button press
     /// \details Requires a char buttonNumber
-	InitGameControl(DisplayTask & display, irSendControlClass & irSend):rtos::task<>("InitGameTask"),KeyPadChannel(this, "character"), display(display), irSend(irSend){};
+	InitGameControl(DisplayTask & display, irSendControlClass & irSend):
+		rtos::task<>("InitGameTask"),
+		KeyPadChannel(this, "character"), 
+		display(display), 
+		irSend(irSend)
+	{};
+	
 	void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
 
 };
