@@ -21,6 +21,8 @@ private:
 		DisplayTask & display;
 		RunGameClass & runGame;
 		int Command;
+		int Playernum;
+        int WpnPower;
 		
 		void main(){
 			int sendnum = 0;
@@ -66,6 +68,7 @@ private:
 									display.clearDisplay();
 									hwlib::wait_ms(500);
 									display.writeDisplay("Weaponpower: ",1);
+									Playernum = sendnum;
 									state = WEAPONPOWER;
 								}	
 							}
@@ -84,6 +87,7 @@ private:
 								sendnum = press-48; //SEND NAAR GAME
 								display.writeDisplay(sendnum,0);
 								hwlib::wait_ms(500);
+								WpnPower=sendnum;
 								state = WAITPLAYTIME;
 							}
 						
@@ -102,6 +106,7 @@ private:
 							runGame.SetGameTime(Command*60);
 						}
 						else if(evt == Startflag){
+							runGame.SetPlayerData(Playernum,WpnPower);
 							display.clearDisplay();
 							runGame.StartGame();
 							suspend();
