@@ -19,7 +19,6 @@ private:
     rtos::flag HitFlag;
     rtos::flag StartFlag;
     rtos::clock timeClock;
-    rtos::channel<char, 10> KeyPadChannel;
     DisplayTask & display;
     irSendControlClass & irSend;
     TransferHitControl & TransferHit;
@@ -33,9 +32,10 @@ private:
     int gunCooldown; 
     uint16_t TmpByte = 0;
     uint16_t ShootData = 32'768; //start bit
-
+	rtos::channel<char, 10> KeyPadChannel;
 
     void main(){
+        auto sw = hwlib::target::pin_in( hwlib::target::pins::d43 );
         for(;;){
             switch(state){
                 // ================================================================
@@ -48,14 +48,12 @@ private:
                 }
                 // ================================================================
                 case NORMAL:{
-                    if((time%10)==0){
+                    if((time%100)==0){
                         display.clearDisplay();
-                        hwlib::wait_ms(500);
+                        hwlib::wait_ms(50);
                         display.writeDisplay("Health:",1);
-                        hwlib::wait_ms(100);
                         display.writeDisplay(Health,0);
                         display.writeDisplay("Time:",1);
-                        hwlib::wait_ms(100);
                         display.writeDisplay(time,0);
                     }
                     
@@ -72,7 +70,7 @@ private:
                             state = IDLE;
                         }
                     }
-                    else if(KeyPadChannel.read() == '*'){
+                    else if(sw.read()==1){
                         if(gunCooldown<=0){
                             state = SHOOT;
                             break;
@@ -93,7 +91,7 @@ private:
                 }
                 // ================================================================
                 case SHOOT:{
-                    ShootData = 32'768;
+                    ShootData = 32768;
                     ShootData = ShootData | (PlayerData << 10);
                     ShootData = ShootData | (PlayerPower << 5);
                     ShootData = ShootData | (PlayerPower^PlayerData << 0);
@@ -109,12 +107,11 @@ private:
     }
 
 public:
-    RunGameClass(irSendControlClass & irSend, DisplayTask & display, long long delay, TransferHitControl & TransferHit): rtos::task<>("RunGameTask"), HitPowerPool("HitPowerPool"), HitPlayerPool("HitPlayerPool"), HitFlag(this, "HitFlag"), StartFlag(this, "StartFlag"), timeClock( this, delay, "timeClock" ), KeyPadChannel(this, "character"), display(display), irSend(irSend), TransferHit(TransferHit){ }
+    RunGameClass(irSendControlClass & irSend, DisplayTask & display, long long delay, TransferHitControl & TransferHit): rtos::task<>("RunGameTask"), HitPowerPool("HitPowerPool"), HitPlayerPool("HitPlayerPool"), HitFlag(this, "HitFlag"), StartFlag(this, "StartFlag"), timeClock( this, delay, "timeClock" ), display(display), irSend(irSend), TransferHit(TransferHit), KeyPadChannel( this, "character" ){ }
     void GetHit(int PlayerNmr, int power){ HitPowerPool.write(power); HitPlayerPool.write(PlayerNmr); HitFlag.set(); }
     void StartGame(){StartFlag.set();}
     void SetPlayerData(int PlayerNmr, int power){ PlayerData = PlayerNmr; PlayerPower = power; }
     void SetGameTime(int Time){ time = Time; }
-    void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
-
+	void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
 };
 #endif
