@@ -14,8 +14,6 @@ private:
 	InitGameControl & InitKeyPad;
 	Registergame & reg;
     RunGamecontrol & RunGame;
-	bool Reg;
-	bool Init;
 	
 private:
 	void main()
