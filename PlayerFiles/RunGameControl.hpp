@@ -25,7 +25,6 @@ private:
     DisplayTask & display;
     irSendControlClass & irSend;
     TransferHitControl & TransferHit;
-    
     hitList HitList;
 
     int PlayerData;
@@ -40,7 +39,6 @@ private:
     void main(){
         for(;;){
             switch(state){
-                // ================================================================
                 case IDLE: {
                     auto evt = wait(StartFlag);
                     if(evt == StartFlag){
@@ -49,7 +47,7 @@ private:
                     }
                     break;
                 }
-                // ================================================================
+
                 case NORMAL:{
                     hwlib::wait_ms(100);    
                     auto evt = wait(HitFlag+timeClock+KeyPadChannel);
@@ -96,34 +94,33 @@ private:
                     }
                     break;
                 }
-                // ================================================================
+
                 case SHOOT:{
                     ShootData = 32'768;
                     ShootData = ShootData | (PlayerData << 10);
                     ShootData = ShootData | (PlayerPower << 5);
                     ShootData = ShootData | (PlayerPower^PlayerData << 0);
-
+                    
                     irSend.setSignal(ShootData); 
                     gunCooldown = PlayerPower;
                     state = NORMAL;
                 }
                 break;
-
             }
         }
     }
 
 public:
     RunGameClass(irSendControlClass & irSend, DisplayTask & display, long long delay, TransferHitControl & TransferHit): 
-    rtos::task<>("RunGameTask"),
-    HitPowerPool("HitPowerPool"),
-    HitPlayerPool("HitPlayerPool"),
-    HitFlag(this, "HitFlag"),
-    StartFlag(this, "StartFlag"),
-    timeClock( this, delay, "timeClock" ),
-    display(display), irSend(irSend), 
-    TransferHit(TransferHit), 
-    KeyPadChannel( this, "character" )
+        rtos::task<>("RunGameTask"),
+        HitPowerPool("HitPowerPool"),
+        HitPlayerPool("HitPlayerPool"),
+        HitFlag(this, "HitFlag"),
+        StartFlag(this, "StartFlag"),
+        timeClock( this, delay, "timeClock" ),
+        display(display), irSend(irSend), 
+        TransferHit(TransferHit), 
+        KeyPadChannel( this, "character" )
     {}
 
     /// \brief Gets playerNmr and power and write them in a pool
