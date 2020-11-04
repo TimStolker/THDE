@@ -8,18 +8,17 @@
 #include "receive.hpp"
 #include "TransferHitControl.hpp"
 
-int main( void ){
+int main( void ){	
     hwlib::wait_ms(500);
     auto transfer = TransferHitControl();
     auto displayClass = DisplayClass();
     auto display = DisplayTask(displayClass);
     auto irSend = irSendControlClass();
     auto Init = InitGameControl(display,irSend);
-    auto runGame = RunGameClass(irSend, display, 10000 * rtos::ms, transfer);
+    auto runGame = RunGameClass(irSend, display, 800 * rtos::ms, transfer);
     auto reg = Registergame(display, runGame);
     auto mykeypad = Keypadclass(Init,reg);
      auto receive = irReceiveControlClass(runGame,reg);
 
-    rtos::run();
+	rtos::run();
 }
-
