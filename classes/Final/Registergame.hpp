@@ -14,9 +14,7 @@ class Registergame : public rtos::task <>{
 	
 private:
 		rtos::channel<char, 10> KeyPadChannel;
-
 		state_t state = IDLE;
-		
 		rtos::flag Commandflag;
 		rtos::pool <uint8_t>CmdRecievePool;
 		rtos::flag Startflag;
@@ -32,7 +30,6 @@ private:
 				switch(state){
 					//=========================================================
 					case IDLE:{
-						hwlib::cout << "IDLE REG \n";
 						display.clearDisplay();
 						hwlib::wait_ms(500);
 						display.writeDisplay("Press A",1);
@@ -85,10 +82,7 @@ private:
 							if(press-'0'>0&&press-'0'<=9)
 							{
 								sendnum = press-48; //SEND NAAR GAME
-
-	
 								display.writeDisplay(sendnum,0);
-								//write weap
 								hwlib::wait_ms(500);
 								state = WAITPLAYTIME;
 							}
@@ -105,15 +99,15 @@ private:
 						auto evt = wait(Commandflag+Startflag);
 						if(evt == Commandflag){
 							Command = CmdRecievePool.read();
-							runGame.SetGameTime(Command);
+							runGame.SetGameTime(Command*60);
 						}
 						else if(evt == Startflag){
+							display.clearDisplay();
 							runGame.StartGame();
-							state = IDLE;
+							suspend();
 						}
 						
 						break;
-						
 					}
 				
 				}
