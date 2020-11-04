@@ -6,26 +6,22 @@
 #include "hwlib.hpp"
 #include "rtos.hpp"
 #include "InitGameControl.hpp"
-
 #ifndef KEYPAD_H
 #define KEYPAD_H
+
 namespace target = hwlib::target; 
 
 class Keypadclass : public rtos::task <>{
-
 private:
 	InitGameControl & InitKeyPad;
 	bool Init;
-	
 private:
-	void main()
-	{		
+	void main(){		
 		hwlib::wait_ms( 50);
 		target::pin_oc out0 = target::pin_oc( target::pins::a3 );
 		target::pin_oc out1 = target::pin_oc( target::pins::a2 );
 		target::pin_oc out2 = target::pin_oc( target::pins::a1 );
 		target::pin_oc out3 = target::pin_oc( target::pins::a0 );
-
 		target::pin_in in0  = target::pin_in( target::pins::a7 );
 		target::pin_in in1  = target::pin_in( target::pins::a6 );
 		target::pin_in in2  = target::pin_in( target::pins::a5 );
@@ -42,10 +38,9 @@ private:
 	}
 public:
 	Keypadclass(InitGameControl & InitKeyPad):
-	rtos::task <>("keypadtaak"), 
-	InitKeyPad(InitKeyPad)
+		rtos::task <>("keypadtaak"), 
+		InitKeyPad(InitKeyPad)
 	{} 
-
 	
 };
 
