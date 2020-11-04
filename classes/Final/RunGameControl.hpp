@@ -8,7 +8,7 @@
 
 
 
-namespace target = hwlib::target; 
+namespace target = hwlib::target;
 
 class RunGameClass : public rtos::task <>{
     enum state_t {IDLE,NORMAL,SHOOT};
@@ -22,14 +22,14 @@ private:
     DisplayTask & display;
     irSendControlClass & irSend;
     TransferHitControl & TransferHit;
-    
+
     hitList HitList;
 
     int PlayerData;
     int PlayerPower;
     int time;
     int Health=100;
-    int gunCooldown; 
+    int gunCooldown;
     uint16_t TmpByte = 0;
     uint16_t ShootData = 32'768; //start bit
 	rtos::channel<char, 10> KeyPadChannel;
@@ -56,7 +56,7 @@ private:
                         display.writeDisplay("Time:",1);
                         display.writeDisplay(time,0);
                     }
-                    
+
 
                     auto evt = wait(HitFlag+timeClock);
                     if(evt == HitFlag){
@@ -96,7 +96,7 @@ private:
                     ShootData = ShootData | (PlayerPower << 5);
                     ShootData = ShootData | (PlayerPower^PlayerData << 0);
 
-                    irSend.setSignal(ShootData); 
+                    irSend.setSignal(ShootData);
                     gunCooldown = PlayerPower;
                     state = NORMAL;
                 }

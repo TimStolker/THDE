@@ -6,7 +6,7 @@ namespace target = hwlib::target;
 
 class hitList{
 private:
-    int hits[9]; 
+    int hits[9];
 
 public:
     hitList(){
@@ -21,14 +21,14 @@ public:
 };
 
 class TransferHitControl : public rtos::task <>{
-	
+
 private:
 	enum state_t { IDLE, DATATRANSFER };
 	state_t state = IDLE;
     rtos::flag transferFlag;
-	
+
 	hitList hitlist;
-	
+
 	void main()
 	{
 		hitlist.set(1, 1);	// TIJDELIJK
@@ -46,10 +46,10 @@ private:
                     auto evt = wait(transferFlag);
                     if(evt == transferFlag){
                         for(;;){
-                            if(ButtonInput.read() == 0) 
+                            if(ButtonInput.read() == 0)
                             {
                                 hwlib::wait_ms(200);
-                                state = DATATRANSFER; 
+                                state = DATATRANSFER;
                             }
                         }
 
@@ -70,9 +70,9 @@ private:
 			}
 		}
 	}
-	
+
 public:
-	TransferHitControl():rtos::task <>(1,"TransferHitTaak"), transferFlag(this, "transferFlag"){}
+	TransferHitControl():rtos::task <>("TransferHitTaak"), transferFlag(this, "transferFlag"){}
     void transfer(hitList & list){ hitlist = list; transferFlag.set(); }
 };
 
