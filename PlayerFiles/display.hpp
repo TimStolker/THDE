@@ -1,3 +1,8 @@
+//this file contains Doxygen lines
+///file display.hpp
+/// \brief display class and display task 
+/// \details Contains all the necessary information about the DisplayClass and DisplayTask
+
 #include "hwlib.hpp"
 #include "rtos.hpp"
 #ifndef DISPLAY_HPP
@@ -5,6 +10,7 @@
 namespace target = hwlib::target; 
 
 class DisplayClass : public rtos::task <>{
+
 private:
     rtos::flag flagDisplayChar;
     rtos::pool<const char*> displayPool;
@@ -12,6 +18,7 @@ private:
     rtos::pool<int> displayPoolInt;
     rtos::flag flagDisplayClear;
     bool NewLine;
+
 
     void main(){
         auto scl     = target::pin_oc( target::pins::scl );
@@ -52,12 +59,29 @@ private:
     }
 
 public:
-    DisplayClass(): task("displayClass"), flagDisplayChar(this, "flagDisplayChar"), displayPool("displayPool"),  flagDisplayInt(this, "flagDisplayInt"), displayPoolInt("displayPoolInt"), flagDisplayClear(this, "flagDisplayClear") { }
+    DisplayClass(): 
+    task("displayClass"), 
+    flagDisplayChar(this, "flagDisplayChar"), 
+    displayPool("displayPool"),  
+    flagDisplayInt(this, "flagDisplayInt"), 
+    displayPoolInt("displayPoolInt"), 
+    flagDisplayClear(this, "flagDisplayClear") 
+    { }
+
+    /// \brief Writes something on the display
+    /// \details Requires a const char* text and a bool newLine. 1 for newLine, 0 for same line
     void setDisplay(const char* text, bool newLine = false){ NewLine= newLine; displayPool.write(text); flagDisplayChar.set();  }
+
+    /// \brief Writes something on the display
+    /// \details Requires an int i and a bool newLine. 1 for newLine, 0 for same line
     void setDisplay(int i, bool newLine = false){ NewLine = newLine; displayPoolInt.write(i); flagDisplayInt.set();  }
+
+    /// \brief Clears the display
+    /// \details Sets the flagDisplayClear
     void clearDisplay(){ flagDisplayClear.set(); }
 };
 
+//-----------------------------------------------------------
 
 class DisplayTask : public rtos::task<>{
 private:
@@ -87,17 +111,25 @@ private:
 
 public:
     DisplayTask(DisplayClass & displayClass):
-        task("displayTask"), 
-        flagDisplayReadChar(this, "flagDisplayReadChar"), 
-        displayPoolReadChar("displayPoolReadChar"), 
-        flagDisplayReadInt(this, "flagDisplayReadInt"), 
-        displayPoolReadInt("displayPoolReadInt"), 
-        flagClear(this, "flagClear"), 
-        display(displayClass)
+    task("displayTask"), 
+    flagDisplayReadChar(this, "flagDisplayReadChar"), 
+    displayPoolReadChar("displayPoolReadChar"), 
+    flagDisplayReadInt(this, "flagDisplayReadInt"), 
+    displayPoolReadInt("displayPoolReadInt"), 
+    flagClear(this, "flagClear"), 
+    display(displayClass)
     {}
-    
+
+    /// \brief Writes something on the display
+    /// \details Requires a const char* text and a bool newLine. 1 for newLine, 0 for same line
     void writeDisplay(const char* text, bool newLine = false){ NewLine = newLine; displayPoolReadChar.write(text); flagDisplayReadChar.set(); }
+
+    /// \brief Writes something on the display
+    /// \details Requires an int i and a bool newLine. 1 for newLine, 0 for same line
     void writeDisplay(int text, bool newLine = false){ NewLine = newLine; displayPoolReadInt.write(text); flagDisplayReadInt.set(); }
+
+    /// \brief Clears the display
+    /// \details Sets the flagClear
     void clearDisplay(){ flagClear.set(); }
 };
 
