@@ -2,6 +2,7 @@
 #include "rtos.hpp"
 #include "Registergame.hpp"
 #include "InitGameControl.hpp"
+#include "RunGameControl.hpp"
 
 #ifndef KEYPAD_H
 #define KEYPAD_H
@@ -12,6 +13,7 @@ class Keypadclass : public rtos::task <>{
 private:
 	InitGameControl & InitKeyPad;
 	Registergame & reg;
+    RunGamecontrol & RunGame;
 	bool Reg;
 	bool Init;
 	
@@ -35,23 +37,18 @@ private:
 		
 		for(;;){
 			auto c = keypad.getc();       
-			if(Reg){
-				reg.buttonPressed(c);
-			}
-			else if(Init){
-				InitKeyPad.buttonPressed(c);
-			}
-			else{
-				InitKeyPad.buttonPressed(c);
-				reg.buttonPressed(c);
-			}
+
+
+			InitKeyPad.buttonPressed(c);
+			reg.buttonPressed(c);
+            RunGame.buttonPressed(c);
+
 			
 		}
 	}
 public:
-	Keypadclass(InitGameControl & InitKeyPad,Registergame & reg):rtos::task <>("keypadtaak"), InitKeyPad(InitKeyPad), reg(reg){}; 
-	void Regnoinit(bool reg){Reg=reg;}
-	void Initnoreg(bool init){Init=init;}
+	Keypadclass(InitGameControl & InitKeyPad,Registergame & reg, RunGameControl & RunGame):rtos::task <>("keypadtaak"), InitKeyPad(InitKeyPad), reg(reg), RunGame(RunGame){}; 
+
 	
 };
 
