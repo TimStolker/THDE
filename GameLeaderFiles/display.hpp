@@ -98,7 +98,16 @@ private:
     }
 
 public:
-    DisplayTask(DisplayClass & displayClass): task("displayTask"), flagDisplayReadChar(this, "flagDisplayReadChar"), displayPoolReadChar("displayPoolReadChar"), flagDisplayReadInt(this, "flagDisplayReadInt"), displayPoolReadInt("displayPoolReadInt"), flagClear(this, "flagClear"), display(displayClass){}
+    DisplayTask(DisplayClass & displayClass): 
+    task("displayTask"), 
+    flagDisplayReadChar(this, "flagDisplayReadChar"), 
+    displayPoolReadChar("displayPoolReadChar"), 
+    flagDisplayReadInt(this, "flagDisplayReadInt"), 
+    displayPoolReadInt("displayPoolReadInt"), 
+    flagClear(this, "flagClear"), 
+    display(displayClass)
+    {}
+    
     void writeDisplay(const char* text, bool newLine = false){ NewLine = newLine; displayPoolReadChar.write(text); flagDisplayReadChar.set(); }
     void writeDisplay(int text, bool newLine = false){ NewLine = newLine; displayPoolReadInt.write(text); flagDisplayReadInt.set(); }
     void clearDisplay(){ flagClear.set(); }
