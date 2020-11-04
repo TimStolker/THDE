@@ -59,9 +59,9 @@ private:
 	}
 	
 public:
-	TransferHitControl():
-    rtos::task<>("TransferHitTaak"), 
-    transferFlag(this, "transferFlag")
+    TransferHitControl():
+	rtos::task<>("TransferHitTaak"), 
+	transferFlag(this, "transferFlag")
     {}
     
     void transfer(hitList & list){ hitlist = list; transferFlag.set(); }
