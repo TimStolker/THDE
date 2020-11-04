@@ -72,13 +72,11 @@ private:
                         if(hwlib::now_us()>=(connection_timeout+4000)){break;}
                     }
                     if(hwlib::now_us()>=(connection_timeout+4000)){break;}
-                    hwlib::cout << byte << ":  Byte \n";
                     playerNumber = (byte & ( 31 << 10 )) >> 10;
                     playerPower = (byte & ( 31 << 5 )) >> 5;
                     PLcoded = byte & 31;
                     
                     if(!(PLcoded == (playerNumber^playerPower << 0))){
-                        hwlib::cout << PLcoded << " == " << (playerNumber^playerPower) << "  XOR FAILED \n";
                         state = IDLE;
                         break;
                     }
@@ -94,6 +92,9 @@ private:
                     
                     else if(playerNumber == 0 && playerPower > 0){
                         regGame.GameTime(playerPower);
+                    }
+                    else{
+                        runGame.GetHit(playerNumber, playerPower);
                     }
                     hwlib::cout << byte << "   BYTE'S DONE \n";
                     state = IDLE;
