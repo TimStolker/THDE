@@ -13,3 +13,4 @@ PlayerFiles:
 Files voor de Spelers.
 Maakt gebruik van GameParameters.control en RunGameControl.hpp
 
+De Files Classes and Test zijn oude files die gebruikt waren om het project uiteindelijk in stand te krijgen.
