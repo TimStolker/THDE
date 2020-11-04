@@ -5,27 +5,25 @@
 
 #include "hwlib.hpp"
 #include "rtos.hpp"
-
 #ifndef SEND_HPP
 #define SEND_HPP
-namespace target = hwlib::target; 
-class irSendControlClass : public rtos::task <>{
 
+namespace target = hwlib::target; 
+
+class irSendControlClass : public rtos::task <>{
 private:
     rtos::flag flagShoot;
     uint16_t Data;
+    uint16_t data_index = 32768; //meest linker bit
 
     void main(){
-        
-        uint16_t data_index = 32768; //meest linker bit
         enum state_t {IDLE, SHOOT}; 
         state_t state = IDLE;
         auto ir = hwlib::target::d2_36kHz(); 
+	    
         for(;;){
             switch(state){
                 case IDLE: {
-                   
-                    
                     auto evt = wait(flagShoot);
                     if(evt == flagShoot){
                         state = SHOOT;
@@ -34,7 +32,6 @@ private:
                 }
                     
                 case SHOOT: {
-                    
                     for(unsigned int i=0;i<16;i++){
                         bool bit = (Data & (data_index >> i));
 			hwlib::wait_us(800);
@@ -53,21 +50,20 @@ private:
                             ir.write(0);
                             ir.flush();
                             hwlib::wait_us(800);
-                            
                         }
                     }
                     state = IDLE;
-                break;
+                    break;
                 }
             }
         }
     }
 
 public:
-    	irSendControlClass(): 
-	rtos::task<>("irsend"), 
-	flagShoot(this, "flagShoot")
-	{}
+     irSendControlClass(): 
+	 rtos::task<>("irsend"), 
+	 flagShoot(this, "flagShoot")
+    {}
 
     /// \brief Sets 16 bits 
     /// \details Requires an uint16_t data and sets the flagShoot
