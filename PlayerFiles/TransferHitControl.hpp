@@ -1,13 +1,15 @@
 //this file contains Doxygen lines
 ///file TransferHitControl.hpp
-/// \brief TransferHitControl class 
-/// \details Contains all the necessary information about the TransferHitControl class
+/// \brief hitlist class 
+/// \details Contains all the necessary information about the hitlist class
 
 #include "hwlib.hpp"
 #include "rtos.hpp"
-namespace target = hwlib::target;
 #ifndef TRANSFERHITCONTROL_H
 #define TRANSFERHITCONTROL_H
+
+namespace target = hwlib::target;
+
 
 class hitList{
 private:
@@ -25,21 +27,18 @@ public:
     }
 };
 
+/// \brief TransferHitControl class 
+/// \details Contains all the necessary information about the TransferHitControl class
 class TransferHitControl : public rtos::task <>{
-	
 private:
 	enum state_t { IDLE, DATATRANSFER };
 	state_t state = IDLE;
-    rtos::flag transferFlag;
-	
+        rtos::flag transferFlag;
 	hitList hitlist;
 	
-	void main()
-	{
-		for(;;)
-		{
-			switch(state)
-			{
+	void main(){
+		for(;;){
+			switch(state){
 				case IDLE:{
 					auto evt = wait(transferFlag);
 					if(evt == transferFlag){
@@ -48,8 +47,7 @@ private:
 					}
 					break;
 				}
-				case DATATRANSFER:
-				{
+				case DATATRANSFER:{
 					for(int i = 0; i<9; i++){
 						if(!(hitlist.get(i) == 0)){
 							hwlib::cout << "Player: " << i << " Damage done: " << hitlist.get(i) << hwlib::endl;
@@ -58,15 +56,15 @@ private:
 					hwlib::cout << "Done" << hwlib:: endl;
 					state = IDLE;
 				}
-					break;
+				break;
 			}
 		}
 	}
 	
 public:
-	TransferHitControl():
-    rtos::task<>("TransferHitTaak"), 
-    transferFlag(this, "transferFlag")
+    TransferHitControl():
+	rtos::task<>("TransferHitTaak"), 
+	transferFlag(this, "transferFlag")
     {}
 
     /// \brief Sets data from hitlist in list and sets a transferFlag

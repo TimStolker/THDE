@@ -7,10 +7,10 @@
 #include "rtos.hpp"
 #ifndef DISPLAY_HPP
 #define DISPLAY_HPP
+
 namespace target = hwlib::target; 
 
 class DisplayClass : public rtos::task <>{
-
 private:
     rtos::flag flagDisplayChar;
     rtos::pool<const char*> displayPool;
@@ -19,30 +19,23 @@ private:
     rtos::flag flagDisplayClear;
     bool NewLine;
 
-
     void main(){
         auto scl     = target::pin_oc( target::pins::scl );
         auto sda     = target::pin_oc( target::pins::sda );
         auto i2c_bus = hwlib::i2c_bus_bit_banged_scl_sda( scl, sda );
         auto oled    = hwlib::glcd_oled( i2c_bus, 0x3c ); 
-    
         auto font    = hwlib::font_default_8x8();
         auto display = hwlib::terminal_from( oled, font ); 
-        
-
         
         for(;;){
             auto evt = wait(flagDisplayChar + flagDisplayInt + flagDisplayClear);
             if(evt == flagDisplayChar){
-                if(NewLine){
-                    
+                if(NewLine){  
                     display << "\n" << displayPool.read() << hwlib::flush; //print de text op een nieuwe lijn
                 }
                 else{
                     display  << displayPool.read() << hwlib::flush; //print de text
                 }
-
-                
             }   
             else if(evt == flagDisplayInt){
                 if(NewLine){
@@ -60,12 +53,12 @@ private:
 
 public:
     DisplayClass(): 
-    task("displayClass"), 
-    flagDisplayChar(this, "flagDisplayChar"), 
-    displayPool("displayPool"),  
-    flagDisplayInt(this, "flagDisplayInt"), 
-    displayPoolInt("displayPoolInt"), 
-    flagDisplayClear(this, "flagDisplayClear") 
+        task("displayClass"), 
+        flagDisplayChar(this, "flagDisplayChar"), 
+        displayPool("displayPool"),  
+        flagDisplayInt(this, "flagDisplayInt"), 
+        displayPoolInt("displayPoolInt"), 
+        flagDisplayClear(this, "flagDisplayClear") 
     { }
 
     /// \brief Writes something on the display
@@ -80,8 +73,6 @@ public:
     /// \details Sets the flagDisplayClear
     void clearDisplay(){ flagDisplayClear.set(); }
 };
-
-//-----------------------------------------------------------
 
 class DisplayTask : public rtos::task<>{
 private:
@@ -111,13 +102,13 @@ private:
 
 public:
     DisplayTask(DisplayClass & displayClass):
-    task("displayTask"), 
-    flagDisplayReadChar(this, "flagDisplayReadChar"), 
-    displayPoolReadChar("displayPoolReadChar"), 
-    flagDisplayReadInt(this, "flagDisplayReadInt"), 
-    displayPoolReadInt("displayPoolReadInt"), 
-    flagClear(this, "flagClear"), 
-    display(displayClass)
+        task("displayTask"), 
+        flagDisplayReadChar(this, "flagDisplayReadChar"), 
+        displayPoolReadChar("displayPoolReadChar"), 
+        flagDisplayReadInt(this, "flagDisplayReadInt"), 
+        displayPoolReadInt("displayPoolReadInt"), 
+        flagClear(this, "flagClear"), 
+        display(displayClass)
     {}
 
     /// \brief Writes something on the display

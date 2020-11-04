@@ -7,40 +7,34 @@
 #include "rtos.hpp"
 #include "display.hpp"
 #include "RunGameControl.hpp"
-
 #ifndef REGISTERGAME_H
 #define REGISTERGAME_H
 
 class Registergame : public rtos::task <>{
-	enum state_t {IDLE, PLAYERNUMBER, WEAPONPOWER, WAITPLAYTIME};
-		
+	enum state_t {IDLE, PLAYERNUMBER, WEAPONPOWER, WAITPLAYTIME};	
 private:
-		rtos::channel<char, 10> KeyPadChannel;
-		state_t state = IDLE;
-		rtos::flag Commandflag;
-		rtos::pool <uint8_t>CmdRecievePool;
-		rtos::flag Startflag;
-		DisplayTask & display;
-		RunGameClass & runGame;
-		int Command;
-		int Playernum;
+	rtos::channel<char, 10> KeyPadChannel;
+	state_t state = IDLE;
+	rtos::flag Commandflag;
+	rtos::pool <uint8_t>CmdRecievePool;
+	rtos::flag Startflag;
+	DisplayTask & display;
+	RunGameClass & runGame;
+	int Command;
+	int Playernum;
         int WpnPower;
-		
 		void main(){
 			int sendnum = 0;
-			
 			hwlib::wait_ms( 500 );
 			for(;;){
 				switch(state){
-					//=========================================================
 					case IDLE:{
 						display.clearDisplay();
 						hwlib::wait_ms(500);
 						display.writeDisplay("Press A",1);
 						
 						auto evt = wait(KeyPadChannel);
-						if(evt==KeyPadChannel)
-						{
+						if(evt==KeyPadChannel){
 							if('A'==KeyPadChannel.read()){
 								display.clearDisplay();
 								hwlib::wait_ms(500);
@@ -50,17 +44,14 @@ private:
 						}
 						break;
 					}
-					//=========================================================
 					case PLAYERNUMBER:{
 						
 						auto evt = wait(KeyPadChannel);
-						if(evt==KeyPadChannel)
-						{
+						if(evt==KeyPadChannel){
 							char press=KeyPadChannel.read();
-							if(press-'0'>=0&&press-'0'<=9)
-							{
+							if(press-'0'>=0&&press-'0'<=9){
 								display.clearDisplay();
-								sendnum = press-48; //SEND NAAR GAME
+								sendnum = press-48;
 								hwlib::wait_ms(500);
 								display.writeDisplay("Player: ");
 								display.writeDisplay(sendnum,0);
@@ -77,16 +68,12 @@ private:
 						}
 						break;
 					}
-					//===========================================================
 					case WEAPONPOWER:{
-
 						auto evt = wait(KeyPadChannel);
-						if(evt==KeyPadChannel)
-						{
+						if(evt==KeyPadChannel){
 							char press=KeyPadChannel.read();
-							if(press-'0'>0&&press-'0'<=9)
-							{
-								sendnum = press-48; //SEND NAAR GAME
+							if(press-'0'>0&&press-'0'<=9){
+								sendnum = press-48;
 								display.writeDisplay(sendnum,0);
 								hwlib::wait_ms(500);
 								WpnPower=sendnum;
@@ -95,9 +82,7 @@ private:
 						
 						}
 						break;
-						
 					}
-					//===========================================================
 					case WAITPLAYTIME:{
 						display.clearDisplay();
 						hwlib::wait_ms(500);
@@ -113,36 +98,33 @@ private:
 							runGame.StartGame();
 							suspend();
 						}
-						
 						break;
 					}
-				
 				}
 			}
-
 		}
 public:
-		Registergame(DisplayTask & display, RunGameClass & runGame):
-        rtos::task<>("ParameterTask"),
-        KeyPadChannel( this, "character" ),
-        Commandflag( this, "Commandflag " ), 
-        CmdRecievePool("CmdRecievePool"), 
-        Startflag(this, "Startflag"), 
-        display(display), 
-        runGame(runGame)
+	Registergame(DisplayTask & display, RunGameClass & runGame):
+		rtos::task<>("ParameterTask"),
+		KeyPadChannel( this, "character" ),
+		Commandflag( this, "Commandflag " ), 
+		CmdRecievePool("CmdRecievePool"), 
+		Startflag(this, "Startflag"), 
+		display(display), 
+		runGame(runGame)
         {}
 
         /// \brief keypad button press
         /// \details Requires a char buttonNumber
-		void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
+	void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
 
         /// \brief Sets the GameTime
         /// \details Requires an int time. sets the CommandFlag and write time in CmdReceivePool
-		void GameTime(int time){Commandflag.set();CmdRecievePool.write(time);}
+	void GameTime(int time){Commandflag.set();CmdRecievePool.write(time);}
 
         /// \brief Starts the game
         /// \details Sets the StartFlag
-		void Start(){Startflag.set();}
+	void Start(){Startflag.set();}
 
 };
 #endif

@@ -5,18 +5,17 @@
 
 #include "hwlib.hpp"
 #include "rtos.hpp"
-
 #ifndef SEND_HPP
 #define SEND_HPP
-namespace target = hwlib::target; 
-class irSendControlClass : public rtos::task <>{
 
+namespace target = hwlib::target; 
+
+class irSendControlClass : public rtos::task <>{
 private:
     rtos::flag flagShoot;
     uint16_t Data;
 
     void main(){
-        
         uint16_t data_index = 32768; //meest linker bit
         enum state_t {IDLE, SHOOT}; 
         state_t state = IDLE;
@@ -49,11 +48,10 @@ private:
                             ir.write(0);
                             ir.flush();
                             hwlib::wait_us(1600);
-                            
                         }
                     }
                     state = IDLE;
-                break;
+                    break;
                 }
             }
         }
@@ -61,8 +59,8 @@ private:
 
 public:
     irSendControlClass():
-    rtos::task<>("irsend"), 
-    flagShoot(this, "flagShoot")
+        rtos::task<>("irsend"), 
+        flagShoot(this, "flagShoot")
     {}
 
     /// \brief Sets 16 bits 

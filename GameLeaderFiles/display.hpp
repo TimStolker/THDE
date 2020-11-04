@@ -1,3 +1,8 @@
+//this file contains Doxygen lines
+///file display.hpp
+/// \brief display class and display task 
+/// \details Contains all the necessary information about the DisplayClass and DisplayTask
+
 #include "hwlib.hpp"
 #include "rtos.hpp"
 #ifndef DISPLAY_HPP
@@ -108,8 +113,16 @@ public:
     display(displayClass)
     {}
     
+    /// \brief Writes something on the display
+    /// \details Requires a const char* text and a bool newLine. 1 for newLine, 0 for same line
     void writeDisplay(const char* text, bool newLine = false){ NewLine = newLine; displayPoolReadChar.write(text); flagDisplayReadChar.set(); }
+
+    /// \brief Writes something on the display
+    /// \details Requires an int i and a bool newLine. 1 for newLine, 0 for same line
     void writeDisplay(int text, bool newLine = false){ NewLine = newLine; displayPoolReadInt.write(text); flagDisplayReadInt.set(); }
+
+    /// \brief Clears the display
+    /// \details Sets the flagClear
     void clearDisplay(){ flagClear.set(); }
 };
 
