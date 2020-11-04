@@ -35,7 +35,6 @@ private:
 					if(evt==KeyPadChannel)
 					{
 						ButtonID = KeyPadChannel.read();
-						hwlib::cout<<ButtonID<<hwlib::endl;
 						if(ButtonID == 'C')
 						{
 							KeyPadPressedTime = 0;
@@ -60,7 +59,6 @@ private:
 					if(evt==KeyPadChannel)
 					{
 						ButtonID = KeyPadChannel.read();
-						hwlib::cout<<ButtonID<<hwlib::endl;
 						if(ButtonID>=48&&ButtonID<57)
 						{
 							KeyPadPressedTime += ButtonID-'0';
@@ -75,7 +73,6 @@ private:
 							if(KeyPadPressedTime>0&&KeyPadPressedTime<=15)
 							{
 								KeyPadPressedTime = (KeyPadPressedTime << 5) | (32768+KeyPadPressedTime);
-								hwlib::cout<<"KeyPadPressTime: " << KeyPadPressedTime << "\n";
 								irSend.setSignal(KeyPadPressedTime);
 								state = SHOOTTIME;
 							}
@@ -100,7 +97,6 @@ private:
 					if(evt==KeyPadChannel)
 					{
 						ButtonID = KeyPadChannel.read();
-						hwlib::cout<<ButtonID<<hwlib::endl;
 						if(ButtonID == '*')
 						{
 							
@@ -141,7 +137,13 @@ private:
 		}
 	}
 public:
-	InitGameControl(DisplayTask & display, irSendControlClass & irSend):rtos::task<>("InitGameTask"),KeyPadChannel(this, "character"), display(display), irSend(irSend){};
+	InitGameControl(DisplayTask & display, irSendControlClass & irSend):
+	rtos::task<>("InitGameTask"),
+	KeyPadChannel(this, "character"), 
+	display(display), 
+	irSend(irSend)
+	{};
+
 	void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
 
 };
