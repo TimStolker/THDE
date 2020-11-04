@@ -1,3 +1,8 @@
+//this file contains Doxygen lines
+///file KeyPad.hpp
+/// \brief KeyPad class 
+/// \details Contains all the necessary information about the KeyPad
+
 #include "hwlib.hpp"
 #include "rtos.hpp"
 #include "InitGameControl.hpp"
@@ -32,14 +37,7 @@ private:
 		
 		for(;;){
 			auto c = keypad.getc();       
-
-			if(Init){
-				InitKeyPad.buttonPressed(c);
-			}
-			else{
-				InitKeyPad.buttonPressed(c);
-			}
-			
+			InitKeyPad.buttonPressed(c);
 		}
 	}
 public:
@@ -47,7 +45,7 @@ public:
 	rtos::task <>("keypadtaak"), 
 	InitKeyPad(InitKeyPad)
 	{} 
-	void Initnoreg(bool init){Init=init;}
+
 	
 };
 
