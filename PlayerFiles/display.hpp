@@ -5,7 +5,6 @@
 namespace target = hwlib::target; 
 
 class DisplayClass : public rtos::task <>{
-
 private:
     rtos::flag flagDisplayChar;
     rtos::pool<const char*> displayPool;
@@ -13,7 +12,6 @@ private:
     rtos::pool<int> displayPoolInt;
     rtos::flag flagDisplayClear;
     bool NewLine;
-
 
     void main(){
         auto scl     = target::pin_oc( target::pins::scl );
@@ -60,7 +58,6 @@ public:
     void clearDisplay(){ flagDisplayClear.set(); }
 };
 
-//-----------------------------------------------------------
 
 class DisplayTask : public rtos::task<>{
 private:
@@ -90,13 +87,13 @@ private:
 
 public:
     DisplayTask(DisplayClass & displayClass):
-    task("displayTask"), 
-    flagDisplayReadChar(this, "flagDisplayReadChar"), 
-    displayPoolReadChar("displayPoolReadChar"), 
-    flagDisplayReadInt(this, "flagDisplayReadInt"), 
-    displayPoolReadInt("displayPoolReadInt"), 
-    flagClear(this, "flagClear"), 
-    display(displayClass)
+        task("displayTask"), 
+        flagDisplayReadChar(this, "flagDisplayReadChar"), 
+        displayPoolReadChar("displayPoolReadChar"), 
+        flagDisplayReadInt(this, "flagDisplayReadInt"), 
+        displayPoolReadInt("displayPoolReadInt"), 
+        flagClear(this, "flagClear"), 
+        display(displayClass)
     {}
     
     void writeDisplay(const char* text, bool newLine = false){ NewLine = newLine; displayPoolReadChar.write(text); flagDisplayReadChar.set(); }
