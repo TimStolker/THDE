@@ -13,7 +13,7 @@ class Keypadclass : public rtos::task <>{
 private:
 	InitGameControl & InitKeyPad;
 	Registergame & reg;
-    RunGamecontrol & RunGame;
+    RunGameClass & RunGame;
 	
 private:
 	void main()
@@ -45,7 +45,7 @@ private:
 		}
 	}
 public:
-	Keypadclass(InitGameControl & InitKeyPad,Registergame & reg, RunGameControl & RunGame):rtos::task <>("keypadtaak"), InitKeyPad(InitKeyPad), reg(reg), RunGame(RunGame){}; 
+	Keypadclass(InitGameControl & InitKeyPad,Registergame & reg, RunGameClass & RunGame):rtos::task <>("keypadtaak"), InitKeyPad(InitKeyPad), reg(reg), RunGame(RunGame){}; 
 
 	
 };
