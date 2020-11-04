@@ -21,12 +21,10 @@ public:
 };
 
 class TransferHitControl : public rtos::task <>{
-	
 private:
 	enum state_t { IDLE, DATATRANSFER };
 	state_t state = IDLE;
-    rtos::flag transferFlag;
-	
+        rtos::flag transferFlag;
 	hitList hitlist;
 	
 	void main()
@@ -53,7 +51,7 @@ private:
 					hwlib::cout << "Done" << hwlib:: endl;
 					state = IDLE;
 				}
-					break;
+				break;
 			}
 		}
 	}
