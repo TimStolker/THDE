@@ -51,7 +51,6 @@ private:
                     hwlib::wait_ms(100);    
                     auto evt = wait(HitFlag+timeClock+KeyPadChannel);
                     if(evt == HitFlag){
-                        hwlib::cout << "HIT \n";
                         Health = (Health - HitPowerPool.read());
                         HitList.set(HitPlayerPool.read(), HitPowerPool.read());
                         if(Health <= 0){
