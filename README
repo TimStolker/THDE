@@ -1,0 +1,15 @@
+Gemaakt door:
+Thema_Devices - Team 9:
+1760874 - Jari Fuijkschot
+1766982 - Stijn Oosting
+1761781 - Tim Stolkers
+1761310 - Alexander de Graaff
+
+GameLeaderFiles:
+Files voor de GameLeader.
+Maakt gebruik van de InitGameControl.hpp
+
+PlayerFiles:
+Files voor de Spelers.
+Maakt gebruik van GameParameters.control en RunGameControl.hpp
+
