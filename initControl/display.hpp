@@ -41,15 +41,12 @@ private:
             }   
             else if(evt == flagDisplayInt){
                 if(NewLine){
-                    
                     display << "\n" << displayPoolInt.read() << hwlib::flush; //print de text op een nieuwe lijn
                 }
                 else{
-                    
-                    display << displayPoolInt.read() << hwlib::flush; //print de text
+                    display  << displayPoolInt.read() << hwlib::flush; //print de text
                 }
             }
-
             else if(evt == flagDisplayClear){
                 display << "\f" << hwlib::flush;
             }
@@ -80,20 +77,14 @@ private:
             auto evt = wait(flagDisplayReadChar+flagDisplayReadInt+flagClear);
             if(evt == flagClear){
                 display.clearDisplay();
-                hwlib::wait_ms(100);
             }
             else if(evt == flagDisplayReadChar){
                 display.setDisplay(displayPoolReadChar.read(), NewLine);
-                hwlib::wait_ms(100);
 
             }
             else if(evt == flagDisplayReadInt){
                 display.setDisplay(displayPoolReadInt.read(), NewLine);
-                hwlib::wait_ms(100); 
             }
-
-            
-            
         }
     }
 
