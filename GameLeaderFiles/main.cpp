@@ -5,8 +5,6 @@
 #include "KeyPad.hpp"
 #include "send.hpp"
 
-
-
 int main( void ){	
     hwlib::wait_ms(500);
     auto displayClass = DisplayClass();
@@ -15,5 +13,5 @@ int main( void ){
     auto Init = InitGameControl(display,irSend);
     auto mykeypad = Keypadclass(Init);
 
-	rtos::run();
+    rtos::run();
 }
