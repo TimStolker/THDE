@@ -19,8 +19,6 @@ private:
         for(;;){
             switch(state){
                 case IDLE: {
-                    flagShoot.set();
-                    
                     auto evt = wait(flagShoot);
                     if(evt == flagShoot){
                         state = SHOOT;
@@ -57,8 +55,8 @@ private:
     }
 
 public:
-    irSendControlClass(): rtos::task<>(1,"irsend"), flagShoot(this, "flagShoot"){}
-    void setSignal(uint16_t data){ Data = data; }
+    irSendControlClass(): rtos::task<>("irsend"), flagShoot(this, "flagShoot"){}
+    void setSignal(uint16_t data){ Data = data; flagShoot.set();}
 
 };
 
