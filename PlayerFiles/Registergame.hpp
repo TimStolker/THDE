@@ -1,3 +1,8 @@
+//this file contains Doxygen lines
+///file Registergame.hpp
+/// \brief Registergame class
+/// \details Contains all the necessary information about the Registergame class
+
 #include "hwlib.hpp"
 #include "rtos.hpp"
 #include "display.hpp"
@@ -19,12 +24,15 @@ private:
 		RunGameClass & runGame;
 		int Command;
 		int Playernum;
-                int WpnPower;
+        int WpnPower;
+		
 		void main(){
 			int sendnum = 0;
+			
 			hwlib::wait_ms( 500 );
 			for(;;){
 				switch(state){
+					//=========================================================
 					case IDLE:{
 						display.clearDisplay();
 						hwlib::wait_ms(500);
@@ -42,6 +50,7 @@ private:
 						}
 						break;
 					}
+					//=========================================================
 					case PLAYERNUMBER:{
 						
 						auto evt = wait(KeyPadChannel);
@@ -68,7 +77,9 @@ private:
 						}
 						break;
 					}
+					//===========================================================
 					case WEAPONPOWER:{
+
 						auto evt = wait(KeyPadChannel);
 						if(evt==KeyPadChannel)
 						{
@@ -86,6 +97,7 @@ private:
 						break;
 						
 					}
+					//===========================================================
 					case WAITPLAYTIME:{
 						display.clearDisplay();
 						hwlib::wait_ms(500);
@@ -101,6 +113,7 @@ private:
 							runGame.StartGame();
 							suspend();
 						}
+						
 						break;
 					}
 				
@@ -109,19 +122,27 @@ private:
 
 		}
 public:
-	Registergame(DisplayTask & display, RunGameClass & runGame):
-		rtos::task<>("ParameterTask"),
-		KeyPadChannel( this, "character" ),
-		Commandflag( this, "Commandflag " ), 
-		CmdRecievePool("CmdRecievePool"), 
-		Startflag(this, "Startflag"), 
-		display(display), 
-		runGame(runGame)
+		Registergame(DisplayTask & display, RunGameClass & runGame):
+        rtos::task<>("ParameterTask"),
+        KeyPadChannel( this, "character" ),
+        Commandflag( this, "Commandflag " ), 
+        CmdRecievePool("CmdRecievePool"), 
+        Startflag(this, "Startflag"), 
+        display(display), 
+        runGame(runGame)
         {}
-        
-	void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
-	void GameTime(int time){Commandflag.set();CmdRecievePool.write(time);}
-	void Start(){Startflag.set();}
+
+        /// \brief keypad button press
+        /// \details Requires a char buttonNumber
+		void buttonPressed(char buttonNumber){KeyPadChannel.write(buttonNumber);}
+
+        /// \brief Sets the GameTime
+        /// \details Requires an int time. sets the CommandFlag and write time in CmdReceivePool
+		void GameTime(int time){Commandflag.set();CmdRecievePool.write(time);}
+
+        /// \brief Starts the game
+        /// \details Sets the StartFlag
+		void Start(){Startflag.set();}
 
 };
 #endif
