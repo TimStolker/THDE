@@ -28,7 +28,6 @@ private:
 				case IDLE:
 				{
 					display.clearDisplay();
-					hwlib::wait_ms(100);
 					display.writeDisplay("Press C");
                 
                     auto evt = wait(KeyPadChannel);
@@ -40,9 +39,7 @@ private:
 						{
 							KeyPadPressedTime = 0;
 							display.clearDisplay();
-							hwlib::wait_ms(100);
-							display.writeDisplay("Select time", 1);
-							display.writeDisplay("Shoot = #",1);
+							display.writeDisplay("Select time", 1); 
 							state = TIMECOMMAND;
 						}
 						else
@@ -65,7 +62,6 @@ private:
 						{
 							KeyPadPressedTime += ButtonID-'0';
 							display.clearDisplay();
-							hwlib::wait_ms(100);
                             display.writeDisplay("TIME= ",1);
 							display.writeDisplay(KeyPadPressedTime,0);
 							state = TIMECOMMAND;
@@ -74,7 +70,7 @@ private:
 						{
 							if(KeyPadPressedTime>0&&KeyPadPressedTime<=15)
 							{
-								KeyPadPressedTime = (KeyPadPressedTime << 5) | (32768+KeyPadPressedTime);
+								KeyPadPressedTime = (KeyPadPressedTime << 5) | 32'768;
 								hwlib::cout<<"KeyPadPressTime: " << KeyPadPressedTime << "\n";
 								irSend.setSignal(KeyPadPressedTime);
 								state = SHOOTTIME;
@@ -104,14 +100,13 @@ private:
 						if(ButtonID == '*')
 						{
 							
-							display.clearDisplay();	
-							hwlib::wait_ms(100);				
+							display.clearDisplay();					
                             display.writeDisplay("Press * to start");
 							
 							state = SHOOTSTART;
 						}
 						else if(ButtonID == '#'){
-							//hwlib::cout<<"Shoot again\n";
+							hwlib::cout<<"Shoot again\n";
 							irSend.setSignal(KeyPadPressedTime);
 						}
 					}
@@ -132,7 +127,7 @@ private:
 						else if(ButtonID == '*')
 						{
 							hwlib::cout<<"Start signal\n";
-							irSend.setSignal(32768);
+							irSend.setSignal(32'768);
 							state = SHOOTSTART;
 						}
 					}
