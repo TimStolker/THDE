@@ -5,9 +5,10 @@
 
 #include "hwlib.hpp"
 #include "rtos.hpp"
-namespace target = hwlib::target;
 #ifndef TRANSFERHITCONTROL_H
 #define TRANSFERHITCONTROL_H
+
+namespace target = hwlib::target;
 
 class hitList{
 private:
